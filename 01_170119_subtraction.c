@@ -14,7 +14,10 @@
  *          Rev.: 05, 19.01.2017 - New structure of the code, changing functions
  *                                 eg. the removecomment
  *          Rev.: 06, 19.01.2017 - Adding first thoughts about the algorithm
- 
+ *          Rev.: 07, 20.01.2017 - Changing full removecomment function and
+ *                                 added function to clear the oparg string
+ *                                 as well added if to check if you use both output
+ *                                 files to close files you realy just use
  
  for(int i = 0; i < ppmWidth*ppmHeight; i++)
  {

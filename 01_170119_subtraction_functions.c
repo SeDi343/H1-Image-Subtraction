@@ -1,6 +1,6 @@
 /* !*  Functions for Color Image Subtraction
  *
- * \author Sebastian Dichler <el16b032@technikum-wien.at><sedi343@gmail.com>
+ * \author Sebastian Dichler <el16b032@technikum-wien.at> <sedi343@gmail.com>
  *
  */
 
@@ -85,7 +85,7 @@ int removecomment(FILE *pFin, FILE *pFin2, FILE *pFout, FILE *pFout2, struct pic
     
     fpos_t position;
     
-    fgetpos(pFin,&position);
+    fgetpos(pFin, &position);
     
     fgets(comment, 500, pFin);
     
@@ -108,18 +108,18 @@ int removecomment(FILE *pFin, FILE *pFin2, FILE *pFout, FILE *pFout2, struct pic
             fclose(pFout2);
         }
         
-        return -1;
+        return 1;
     }
     
     if (comment[0] != '#')
     {
-        fsetpos(pFin,&position);
+        fsetpos(pFin, &position);
     }
     else
     {
         while (comment[0] == '#')
         {
-            fgetpos(pFin,&position);
+            fgetpos(pFin, &position);
             fgets(comment, 500, pFin);
             
             if (comment[strlen(comment)-1] != '\n' && comment[0] == '#')
@@ -141,7 +141,7 @@ int removecomment(FILE *pFin, FILE *pFin2, FILE *pFout, FILE *pFout2, struct pic
                     fclose(pFout2);
                 }
                 
-                return -1;
+                return 1;
             }
             
             if (comment[0] != '#')
@@ -151,7 +151,7 @@ int removecomment(FILE *pFin, FILE *pFin2, FILE *pFout, FILE *pFout2, struct pic
         }
     }
     
-    fsetpos(pFin,&position);
+    fsetpos(pFin, &position);
     
     return 0;
 }

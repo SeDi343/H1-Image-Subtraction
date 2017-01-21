@@ -340,7 +340,7 @@ int main (int argc, char *argv[])
     returnvalue = fscanf(pFin_1, "%99s", id_1);
     returnvalue = fscanf(pFin_2, "%99s", id_2);
     
-    if (returnvalue >= STRINGLENGTH-1)
+    if (returnvalue >= STRINGLENGTH)
     {
         printf(BOLD"\nERROR: Not supported data format.\n"RESET);
         

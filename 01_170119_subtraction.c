@@ -28,6 +28,7 @@
  *                                 somehow return -1 isn't canceling program,
  *                                 checking return value of every removecomment()
  *                                 request
+ *          Rev.: 12, 22.01.2017 - Checking every return value of every function
  *
  * \information Tested on macOS Sierra 10.12.2, ubuntu 12.04, raspi3pixel 4.4.38-v7+
  *
@@ -406,13 +407,55 @@ int main (int argc, char *argv[])
             return -1;
         }
 
-/* ---- READING WIDTH AND HEIGHT ---- */
+/* ---- READING WIDTH AND HEIGHT 1 ---- */
         
-        fscanf(pFin_1, "%u", &width_pic_1);
-        fscanf(pFin_1, "%u", &height_pic_1);
+        returnvalue = fscanf(pFin_1, "%u", &width_pic_1);
         
-        fscanf(pFin_2, "%u", &width_pic_2);
-        fscanf(pFin_2, "%u", &height_pic_2);
+        if (returnvalue == 0)
+        {
+            printf(BOLD"\nERROR: Cant read input file.\n"RESET);
+            
+            closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+            
+            return -1;
+        }
+        
+        returnvalue = fscanf(pFin_1, "%u", &height_pic_1);
+        
+        if (returnvalue == 0)
+        {
+            printf(BOLD"\nERROR: Cant read input file.\n"RESET);
+            
+            closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+            
+            return -1;
+        }
+        
+/* ---- READING WIDTH AND HEIGHT 2 ---- */
+
+        returnvalue = fscanf(pFin_2, "%u", &width_pic_2);
+        
+        if (returnvalue == 0)
+        {
+            printf(BOLD"\nERROR: Cant read input file.\n"RESET);
+            
+            closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+            
+            return -1;
+        }
+        
+        returnvalue = fscanf(pFin_2, "%u", &height_pic_2);
+        
+        if (returnvalue == 0)
+        {
+            printf(BOLD"\nERROR: Cant read input file.\n"RESET);
+
+            closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+            
+            return -1;
+        }
+        
+/* ---- REMOVING COMMENT IF PRESENT ---- */
         
         error = removecomment(FILE_1);
         
@@ -433,9 +476,27 @@ int main (int argc, char *argv[])
         
 /* ---- READING MAX COLOR INDEX ---- */
         
-        fscanf(pFin_1, "%u", &max_color_1);
+        returnvalue = fscanf(pFin_1, "%u", &max_color_1);
         
-        fscanf(pFin_2, "%u", &max_color_2);
+        if (returnvalue == 0)
+        {
+            printf(BOLD"\nERROR: Cant read input file.\n"RESET);
+            
+            closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+            
+            return -1;
+        }
+
+        returnvalue = fscanf(pFin_2, "%u", &max_color_2);
+        
+        if (returnvalue == 0)
+        {
+            printf(BOLD"\nERROR: Cant read input file.\n"RESET);
+
+            closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+            
+            return -1;
+        }
         
 /* ---- DIFFERENT PICTURES ARE NOT ALLOWED ---- */
         
@@ -507,9 +568,48 @@ int main (int argc, char *argv[])
                 return -1;
             }
             
-            fscanf(pFin_1, "%u", &(picture_1_Pointer+i)->r);
-            fscanf(pFin_1, "%u", &(picture_1_Pointer+i)->g);
-            fscanf(pFin_1, "%u", &(picture_1_Pointer+i)->b);
+            returnvalue = fscanf(pFin_1, "%u", &(picture_1_Pointer+i)->r);
+            
+            if (returnvalue == 0)
+            {
+                printf(BOLD"\nERROR: Cant read input file.\n"RESET);
+                
+                free(picture_1_Pointer);
+                free(picture_2_Pointer);
+                free(picture_edit_Pointer);
+                closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+                
+                return -1;
+            }
+            
+            returnvalue = fscanf(pFin_1, "%u", &(picture_1_Pointer+i)->g);
+            
+            if (returnvalue == 0)
+            {
+                printf(BOLD"\nERROR: Cant read input file.\n"RESET);
+                
+                free(picture_1_Pointer);
+                free(picture_2_Pointer);
+                free(picture_edit_Pointer);
+                closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+                
+                return -1;
+            }
+            
+            returnvalue = fscanf(pFin_1, "%u", &(picture_1_Pointer+i)->b);
+            
+            if (returnvalue == 0)
+            {
+                printf(BOLD"\nERROR: Cant read input file.\n"RESET);
+                
+                free(picture_1_Pointer);
+                free(picture_2_Pointer);
+                free(picture_edit_Pointer);
+                closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+                
+                return -1;
+            }
+            
         }
         
         for (i = 0; i < width_pic_2*height_pic_2; i++)
@@ -526,9 +626,47 @@ int main (int argc, char *argv[])
                 return -1;
             }
 
-            fscanf(pFin_2, "%u", &(picture_2_Pointer+i)->r);
-            fscanf(pFin_2, "%u", &(picture_2_Pointer+i)->g);
-            fscanf(pFin_2, "%u", &(picture_2_Pointer+i)->b);
+            returnvalue = fscanf(pFin_2, "%u", &(picture_2_Pointer+i)->r);
+            
+            if (returnvalue == 0)
+            {
+                printf(BOLD"\nERROR: Cant read input file.\n"RESET);
+                
+                free(picture_1_Pointer);
+                free(picture_2_Pointer);
+                free(picture_edit_Pointer);
+                closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+                
+                return -1;
+            }
+            
+            returnvalue = fscanf(pFin_2, "%u", &(picture_2_Pointer+i)->g);
+            
+            if (returnvalue == 0)
+            {
+                printf(BOLD"\nERROR: Cant read input file.\n"RESET);
+                
+                free(picture_1_Pointer);
+                free(picture_2_Pointer);
+                free(picture_edit_Pointer);
+                closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+                
+                return -1;
+            }
+            
+            returnvalue = fscanf(pFin_2, "%u", &(picture_2_Pointer+i)->b);
+            
+            if (returnvalue == 0)
+            {
+                printf(BOLD"\nERROR: Cant read input file.\n"RESET);
+                
+                free(picture_1_Pointer);
+                free(picture_2_Pointer);
+                free(picture_edit_Pointer);
+                closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+                
+                return -1;
+            }
         }
         
         printf(BOLD"* Done file Import!\n\n"RESET);
@@ -686,17 +824,80 @@ int main (int argc, char *argv[])
         
         printf(BOLD"* Writing file....\n"RESET);
         
-        fprintf(pFout_1, "P3\n");
-        fprintf(pFout_1, "#Color Image Subtraction by Sebastian Dichler\n");
-        fprintf(pFout_1, "%u %u\n", width_pic_1, height_pic_1);
-        fprintf(pFout_1, "%u\n", max_color_1);
+        returnvalue = fprintf(pFout_1, "P3\n");
+        
+        if (returnvalue == 0)
+        {
+            printf(BOLD"\nERROR: Cant write output file.\n"RESET);
+            
+            free(picture_1_Pointer);
+            free(picture_2_Pointer);
+            free(picture_edit_Pointer);
+            closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+            
+            return -1;
+        }
+        
+        returnvalue = fprintf(pFout_1, "#Color Image Subtraction by Sebastian Dichler\n");
+        
+        if (returnvalue == 0)
+        {
+            printf(BOLD"\nERROR: Cant write output file.\n"RESET);
+            
+            free(picture_1_Pointer);
+            free(picture_2_Pointer);
+            free(picture_edit_Pointer);
+            closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+            
+            return -1;
+        }
+        
+        returnvalue = fprintf(pFout_1, "%u %u\n", width_pic_1, height_pic_1);
+        
+        if (returnvalue == 0)
+        {
+            printf(BOLD"\nERROR: Cant write output file.\n"RESET);
+            
+            free(picture_1_Pointer);
+            free(picture_2_Pointer);
+            free(picture_edit_Pointer);
+            closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+            
+            return -1;
+        }
+        
+        returnvalue = fprintf(pFout_1, "%u\n", max_color_1);
+        
+        if (returnvalue == 0)
+        {
+            printf(BOLD"\nERROR: Cant write output file.\n"RESET);
+            
+            free(picture_1_Pointer);
+            free(picture_2_Pointer);
+            free(picture_edit_Pointer);
+            closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+            
+            return -1;
+        }
         
 /* ---- WRITING PIXELS INTO OUTPUT FILE ---- */
         
         for (i = 0; i < width_pic_1*height_pic_1; i++)
         {
-            fprintf(pFout_1, "%u %u %u\n",
+            returnvalue = fprintf(pFout_1, "%u %u %u\n",
                     (picture_edit_Pointer+i)->r, (picture_edit_Pointer+i)->g, (picture_edit_Pointer+i)->b);
+            
+            if (returnvalue == 0)
+            {
+                printf(BOLD"\nERROR: Cant write output file.\n"RESET);
+                
+                free(picture_1_Pointer);
+                free(picture_2_Pointer);
+                free(picture_edit_Pointer);
+                closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+                
+                return -1;
+            }
         }
         
         printf(BOLD"* Done writing file!\n\n"RESET);
@@ -848,17 +1049,80 @@ int main (int argc, char *argv[])
             
             printf(BOLD"* Writing file....\n"RESET);
             
-            fprintf(pFout_2, "P3\n");
-            fprintf(pFout_2, "#Color Image Subtraction by Sebastian Dichler\n");
-            fprintf(pFout_2, "%u %u\n", width_pic_1, height_pic_1);
-            fprintf(pFout_2, "%u\n", max_color_1);
+            returnvalue = fprintf(pFout_2, "P3\n");
+            
+            if (returnvalue == 0)
+            {
+                printf(BOLD"\nERROR: Cant write output file.\n"RESET);
+                
+                free(picture_1_Pointer);
+                free(picture_2_Pointer);
+                free(picture_edit_Pointer);
+                closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+                
+                return -1;
+            }
+            
+            returnvalue = fprintf(pFout_2, "#Color Image Subtraction by Sebastian Dichler\n");
+            
+            if (returnvalue == 0)
+            {
+                printf(BOLD"\nERROR: Cant write output file.\n"RESET);
+                
+                free(picture_1_Pointer);
+                free(picture_2_Pointer);
+                free(picture_edit_Pointer);
+                closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+                
+                return -1;
+            }
+            
+            returnvalue = fprintf(pFout_2, "%u %u\n", width_pic_1, height_pic_1);
+            
+            if (returnvalue == 0)
+            {
+                printf(BOLD"\nERROR: Cant write output file.\n"RESET);
+                
+                free(picture_1_Pointer);
+                free(picture_2_Pointer);
+                free(picture_edit_Pointer);
+                closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+                
+                return -1;
+            }
+            
+            returnvalue = fprintf(pFout_2, "%u\n", max_color_1);
+            
+            if (returnvalue == 0)
+            {
+                printf(BOLD"\nERROR: Cant write output file.\n"RESET);
+                
+                free(picture_1_Pointer);
+                free(picture_2_Pointer);
+                free(picture_edit_Pointer);
+                closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+                
+                return -1;
+            }
             
 /* ---- WRITING PIXELS INTO OUTPUT FILE ---- */
             
             for (i = 0; i < width_pic_1*height_pic_1; i++)
             {
-                fprintf(pFout_2, "%u %u %u\n",
+                returnvalue = fprintf(pFout_2, "%u %u %u\n",
                         (picture_edit_Pointer+i)->r, (picture_edit_Pointer+i)->g, (picture_edit_Pointer+i)->b);
+                
+                if (returnvalue == 0)
+                {
+                    printf(BOLD"\nERROR: Cant write output file.\n"RESET);
+                    
+                    free(picture_1_Pointer);
+                    free(picture_2_Pointer);
+                    free(picture_edit_Pointer);
+                    closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+                    
+                    return -1;
+                }
             }
             
             printf(BOLD"* Done writing file!\n"RESET);

@@ -81,7 +81,7 @@ void helpdesk_2(void)
 
 int removecomment(FILE *pFin, FILE *pFin2, FILE *pFout, FILE *pFout2, struct picture *Pointer_1, struct picture *Pointer_2, struct picture *Pointer_3, int second_file)
 {
-    char comment[STRINGLENGTH];
+    char comment[STRINGLENGTH+1];
     
     fpos_t position;
     

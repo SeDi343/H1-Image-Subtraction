@@ -47,8 +47,8 @@ int main (int argc, char *argv[])
     
     int counterParameter = 0;
 
-    char id_1[80];
-    char id_2[80];
+    char id_1[STRINGLENGTH];
+    char id_2[STRINGLENGTH];
     unsigned int width_pic_1;
     unsigned int width_pic_2;
     unsigned int height_pic_1;
@@ -80,6 +80,8 @@ int main (int argc, char *argv[])
     int error = 0;
     
     int second_file = 0;
+    
+    int returnvalue = 0;
     
     char *pEnd;
     
@@ -335,8 +337,15 @@ int main (int argc, char *argv[])
 
 /* ---- CHECK FOR P3 ---- */
     
-    fscanf(pFin_1, "%79s", id_1);
-    fscanf(pFin_2, "%79s", id_2);
+    returnvalue = fscanf(pFin_1, "%99s", id_1);
+    returnvalue = fscanf(pFin_2, "%99s", id_2);
+    
+    if (returnvalue >= STRINGLENGTH-1)
+    {
+        printf(BOLD"\nERROR: Not supported data format.\n"RESET);
+        
+        closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+    }
 
 /* ---- FSCANF DOESNT READ THE LAST CHAR IN A STRING EG "\n" ---- */
 

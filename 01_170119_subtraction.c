@@ -14,53 +14,16 @@
  *          Rev.: 05, 19.01.2017 - New structure of the code, changing functions
  *                                 eg. the removecomment
  *          Rev.: 06, 19.01.2017 - Adding first thoughts about the algorithm
+ *          Rev.: 07, 20.01.2017 - Adding 2nd output, everything is black, without
+ *                                 the changed object.
  *          Rev.: 07, 20.01.2017 - Changing full removecomment function and
  *                                 added function to clear the oparg string
  *                                 as well added if to check if you use both output
  *                                 files to close files you realy just use
- 
- for(int i = 0; i < ppmWidth*ppmHeight; i++)
- {
-    redDiff = fabs((pixel2Pointer+i)->r - (pixel1Pointer+i)->r);
-    greenDiff = fabs((pixel2Pointer+i)->g - (pixel1Pointer+i)->g);
-    blueDiff = fabs((pixel2Pointer+i)->b - (pixel1Pointer+i)->b);
- 
-    if(redDiff < threshold)
-    {
-        if(greenDiff < threshold)
-        {
-            if(blueDiff < threshold)
-            {
-                redDiff = thresholdBlack;
-                greenDiff = thresholdBlack;
-                blueDiff = thresholdBlack;
-            }
-            else
-            {
-                redDiff = thresholdShowRed;
-                greenDiff = thresholdShowGreen;
-                blueDiff = thresholdShowBlue;
-            }
-        }
-        else
-        {
-            redDiff = thresholdShowRed;
-            greenDiff = thresholdShowGreen;
-            blueDiff = thresholdShowBlue;
-        }
-    }
-    else
-    {
-        redDiff = thresholdShowRed;
-        greenDiff = thresholdShowGreen;
-        blueDiff = thresholdShowBlue;
-    }
- 
-    (pixeloutPointer+i)->r = redDiff;
-    (pixeloutPointer+i)->g = greenDiff;
-    (pixeloutPointer+i)->b = blueDiff;
- }
- 
+ *          Rev.: 08, 21.01.2017 - Changed algorythm -> Helmut helped me with that
+ *          Rev.: 09, 21.01.2017 - Adding some algorythms
+ *
+ * \information Tested on macOS Sierra 10.12.2, ubuntu 12.04,
  */
 
 #include "myHeader.h"
@@ -98,14 +61,20 @@ int main (int argc, char *argv[])
     int i = 0;
     int opt;
     
-    float redChannel = 255;
-    float blueChannel = 255;
-    float greenChannel = 255;
+    int redChannel = 255;
+    int blueChannel = 255;
+    int greenChannel = 255;
     
+    int reddiffcolor = 0;
+    int greendiffcolor = 0;
+    int bluediffcolor = 0;
     int diffcolor = 0;
     
     int threshold = 0;
-    float threshold_percent = 10;
+    int threshold_percent = 10;
+    
+    char algorithm_code[STRINGLENGTH];
+    int algorithm_code_number = 0;
     
     int error = 0;
     
@@ -121,7 +90,7 @@ int main (int argc, char *argv[])
     
 /* ---- CHECK FOR INPUT PARAMETERS ---- */
     
-    while ( (opt = getopt (argc, argv, "f:s:o:n:t:r:g:b:h:?")) != -1)
+    while ( (opt = getopt (argc, argv, "f:s:o:n:t:r:g:b:a:h:?")) != -1)
     {
         switch (opt)
         {
@@ -136,6 +105,9 @@ int main (int argc, char *argv[])
                 if (pFin_1 == NULL)
                 {
                     printf(BOLD"\nERROR: Can't open file %s\n"RESET, inputFile1);
+                    
+                    closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+                    
                     return -1;
                 }
                 counterParameter++;
@@ -151,6 +123,9 @@ int main (int argc, char *argv[])
                 if (pFin_2 == NULL)
                 {
                     printf(BOLD"\nERROR: Can't open file %s\n"RESET, inputFile2);
+                    
+                    closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+
                     return -1;
                 }
                 counterParameter++;
@@ -166,6 +141,9 @@ int main (int argc, char *argv[])
                 if (pFout_1 == NULL)
                 {
                     printf(BOLD"\nERROR: Can't create file %s\n"RESET, outputFile1);
+                    
+                    closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+
                     return -1;
                 }
                 counterParameter++;
@@ -183,6 +161,9 @@ int main (int argc, char *argv[])
                 if (pFout_2 == NULL)
                 {
                     printf(BOLD"\nERROR: Can't create file %s\n"RESET, outputFile2);
+                    
+                    closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+
                     return -1;
                 }
             break;
@@ -227,11 +208,22 @@ int main (int argc, char *argv[])
                 blueChannel = strtod(blueString, &pEnd);
             break;
                 
+/* ---- SUPPORTING MORE ALGORITHMS ---- */
+                
+            case 'a':
+                error = clearOptarg(algorithm_code, optarg);
+                
+                error = check_number(algorithm_code);
+                
+                algorithm_code_number = strtod(algorithm_code, &pEnd);
+            break;
+                
 /* ---- HELPDESK ---- */
                 
             case 'h':
                 clearNoHelp();
                 helpdesk_2();
+                
                 return 0;
             break;
                 
@@ -240,6 +232,7 @@ int main (int argc, char *argv[])
             case '?':
                 clearNoHelp();
                 helpdesk_2();
+                
                 return 0;
             break;
         }
@@ -249,9 +242,25 @@ int main (int argc, char *argv[])
 /* S T A R T   O F   P R O G R A M                                  */
 /*------------------------------------------------------------------*/
     
+/* ---- CHECK FOR NO PARAMETER INPUT ---- */
+    
+    if (argc == 1)
+    {
+        clearNoHelp();
+        helpdesk_2();
+        printf(BOLD"\nERROR: No Parameters given.\n"RESET);
+        
+        return -1;
+    }
+    
+/* ---- IF ONE PARAMETER INPUT FAILED OR IS NOT CORRECT ---- */
+    
     if (error == 1)
     {
         printf(BOLD"\nERROR: One or more Parameters are not correct.\n"RESET);
+        
+        closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+        
         return -1;
     }
     
@@ -260,21 +269,64 @@ int main (int argc, char *argv[])
     if (pFin_1 == NULL || pFin_2 == NULL || counterParameter != 3)
     {
         printf(BOLD"\nERROR: Both Inputfiles and Outputfile must be present.\n"RESET);
+        
+        closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+
         return -1;
     }
     
+/* ---- PARAMETER -O NEEDS AN ARGUMENT ---- */
+    
     if (pFout_1 == NULL)
     {
-        printf(BOLD"\nERROR: Parameter -o requires an argument.\n");
+        printf(BOLD"\nERROR: Parameter -o requires an argument.\n"RESET);
+        
+        closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+
+        return -1;
     }
+    
+/* ---- PARAMETER -N NEEDS AN ARGUMENT ---- */
     
     if (second_file == 1)
     {
         if (pFout_2 == NULL)
         {
-            printf(BOLD"\nERROR: Parameter -n requires an argument.\n");
+            printf(BOLD"\nERROR: Parameter -n requires an argument.\n"RESET);
+            
+            closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+
+            return -1;
         }
     }
+    
+/* ---- THRESHOLD_PERCENT CAN ONLY BE 0 TO 100 ---- */
+    
+    if (threshold_percent > 100 || threshold_percent < 0)
+    {
+        printf(BOLD"\nERROR: Threshold must be 0 to 100. Your input: %d\n"RESET, threshold_percent);
+        
+        closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+
+        return -1;
+    }
+    
+/* ---- ALGORITHM CODE NUMBER NOT 0 OR 1 ---- */
+    
+    if (algorithm_code_number != 0 && algorithm_code_number != 1 && algorithm_code_number != 2)
+    {
+        printf(BOLD"\nERROR: Algorithm code number can only be 0, 1 or 2. Your input: %d\n"RESET, algorithm_code_number);
+        
+        closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+        
+        return -1;
+    }
+    
+    
+#if DEBUG
+    printf(RED" * Threshold percent: %d\n * Algorithm code: %d\n * Second File (1): %d\n"RESET,
+           threshold_percent, algorithm_code_number, second_file);
+#endif
     
 /*------------------------------------------------------------------*/
 /* R E A D I N G   F I L E                                          */
@@ -326,6 +378,9 @@ int main (int argc, char *argv[])
         {
             printf(BOLD"\nERROR: Pictures haven't the same main information (PIC1: %dx%d, %d; PIC2: %dx%d, %d)\n"RESET,
                    width_pic_1, height_pic_1, max_color_1, width_pic_2, height_pic_2, max_color_2);
+            
+            closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+
             return -1;
         }
         
@@ -334,12 +389,18 @@ int main (int argc, char *argv[])
         if (redChannel > max_color_1 || greenChannel > max_color_1 || blueChannel > max_color_1)
         {
             printf(BOLD"\nERROR: Color Index not allowed (chose between 0 and %d"RESET, max_color_1);
+            
+            closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+
             return -1;
         }
         
         if (redChannel > max_color_2 || greenChannel > max_color_2 || blueChannel > max_color_2)
         {
             printf(BOLD"\nERROR: Color Index not allowed (chose between 0 and %d"RESET, max_color_2);
+            
+            closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+
             return -1;
         }
         
@@ -357,12 +418,15 @@ int main (int argc, char *argv[])
             free(picture_1_Pointer);
             free(picture_2_Pointer);
             free(picture_edit_Pointer);
+            
+            closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+
             return -1;
         }
         
 /* ---- READ PIXELS ---- */
         
-        printf(BOLD"\nImporting file....\n"RESET);
+        printf(BOLD"* Importing file....\n"RESET);
         
         for (i = 0; i < width_pic_1*height_pic_1; i++)
         {
@@ -382,79 +446,124 @@ int main (int argc, char *argv[])
             fscanf(pFin_2, "%u", &(picture_2_Pointer+i)->b);
         }
         
-        printf(BOLD"Done file Import!\n\n"RESET);
+        printf(BOLD"* Done file Import!\n\n"RESET);
         
         
 /*------------------------------------------------------------------*/
 /* A L G O R I T H M   1   -   C O L O R S                          */
 /*------------------------------------------------------------------*/
-        if (second_file == 1)
-        {
-            printf(BOLD"Creating Picture 1\n\n"RESET);
-        }
-        
-        printf(BOLD"Checking Color Channels...\n"RESET);
         
         threshold = (threshold_percent * max_color_1) / 100;
         
 #if DEBUG
-        printf(RED"THRESHOLD: %d\n"RESET, threshold);
-        printf(RED"THRESHOLD%%: %f%%\n"RESET, threshold_percent);
+        printf(RED" * Threshold: %d\n"RESET, threshold);
 #endif
-    
-        for (i = 0; i < width_pic_1*height_pic_1; i++)
-        {
-            diffcolor = (((picture_1_Pointer+i)->r + (picture_1_Pointer+i)->g + (picture_1_Pointer+i)->b) -
-                         ((picture_2_Pointer+i)->r + (picture_2_Pointer+i)->g + (picture_2_Pointer+i)->b));
-            
-            diffcolor = abs(diffcolor);
-            //diffcolor = diffcolor&0x7FFFFFFF;
-            
-            if (diffcolor > threshold)
-            {
-                (picture_edit_Pointer+i)->r = redChannel;
-                (picture_edit_Pointer+i)->g = greenChannel;
-                (picture_edit_Pointer+i)->b = blueChannel;
-            }
-            else
-            {
-                (picture_edit_Pointer+i)->r = (picture_1_Pointer+i)->r;
-                (picture_edit_Pointer+i)->g = (picture_1_Pointer+i)->g;
-                (picture_edit_Pointer+i)->b = (picture_1_Pointer+i)->b;
-            }
-        }
-        
-        printf(BOLD"Done Checking Color Channels!\n\n"RESET);
-        
-/* ---- WRITE HEADER INTO OUTPUT FILE ---- */
-        
-        printf(BOLD"Writing file....\n"RESET);
-        
-        fprintf(pFout_1, "P3\n");
-        fprintf(pFout_1, "#Color Image Subtraction by Sebastian Dichler\n");
-        fprintf(pFout_1, "%u %u\n", width_pic_1, height_pic_1);
-        fprintf(pFout_1, "%u\n", max_color_1);
-        
-/* ---- WRITING PIXELS INTO OUTPUT FILE ---- */
-        
-        for (i = 0; i < width_pic_1*height_pic_1; i++)
-        {
-            fprintf(pFout_1, "%u %u %u\n",
-                    (picture_edit_Pointer+i)->r, (picture_edit_Pointer+i)->g, (picture_edit_Pointer+i)->b);
-        }
-        
-        printf(BOLD"Done writing file!\n\n"RESET);
-        
-/*------------------------------------------------------------------*/
-/* A L G O R I T H M   2   -   B L A C K                            */
-/*------------------------------------------------------------------*/
         
         if (second_file == 1)
         {
-            printf(BOLD"Creating Picture 2\n\n"RESET);
-
-            printf(BOLD"Checking Color Channels...\n"RESET);
-            
+            printf(BOLD"Creating Picture 1:\n\n"RESET);
+        }
+        
+        printf(BOLD"* Checking Color Channels...\n"RESET);
+        
+/* ---- DEFAULT ALGORITHM (0) ---- */
+        
+        if (algorithm_code_number == 0)
+        {
+            for(i = 0; i < width_pic_1*height_pic_1; i++)
+            {
+                reddiffcolor = abs((picture_2_Pointer+i)->r - (picture_1_Pointer+i)->r);
+                greendiffcolor = abs((picture_2_Pointer+i)->g - (picture_1_Pointer+i)->g);
+                bluediffcolor = abs((picture_2_Pointer+i)->b - (picture_1_Pointer+i)->b);
+                
+                if(reddiffcolor < threshold)
+                {
+                    if(greendiffcolor < threshold)
+                    {
+                        if(bluediffcolor < threshold)
+                        {
+                            reddiffcolor = (picture_1_Pointer+i)->r;
+                            greendiffcolor = (picture_1_Pointer+i)->g;
+                            bluediffcolor = (picture_1_Pointer+i)->b;
+                        }
+                        else
+                        {
+                            reddiffcolor = redChannel;
+                            greendiffcolor = greenChannel;
+                            bluediffcolor = blueChannel;
+                        }
+                    }
+                    else
+                    {
+                        reddiffcolor = redChannel;
+                        greendiffcolor = greenChannel;
+                        bluediffcolor = blueChannel;
+                    }
+                }
+                else
+                {
+                    reddiffcolor = redChannel;
+                    greendiffcolor = greenChannel;
+                    bluediffcolor = blueChannel;
+                }
+                
+                (picture_edit_Pointer+i)->r = reddiffcolor;
+                (picture_edit_Pointer+i)->g = greendiffcolor;
+                (picture_edit_Pointer+i)->b = bluediffcolor;
+            }
+        }
+        
+/* ---- ALGORITHM (1) ---- */
+        
+        if (algorithm_code_number == 1)
+        {
+            for(i = 0; i < width_pic_1*height_pic_1; i++)
+            {
+                reddiffcolor = abs((picture_2_Pointer+i)->r - (picture_1_Pointer+i)->r);
+                greendiffcolor = abs((picture_2_Pointer+i)->g - (picture_1_Pointer+i)->g);
+                bluediffcolor = abs((picture_2_Pointer+i)->b - (picture_1_Pointer+i)->b);
+                
+                if(reddiffcolor < threshold)
+                {
+                    if(greendiffcolor < threshold)
+                    {
+                        if(bluediffcolor < threshold)
+                        {
+                            reddiffcolor = redChannel;
+                            greendiffcolor = greenChannel;
+                            bluediffcolor = blueChannel;
+                        }
+                        else
+                        {
+                            reddiffcolor = (picture_1_Pointer+i)->r;
+                            greendiffcolor = (picture_1_Pointer+i)->g;
+                            bluediffcolor = (picture_1_Pointer+i)->b;
+                        }
+                    }
+                    else
+                    {
+                        reddiffcolor = (picture_1_Pointer+i)->r;
+                        greendiffcolor = (picture_1_Pointer+i)->g;
+                        bluediffcolor = (picture_1_Pointer+i)->b;
+                    }
+                }
+                else
+                {
+                    reddiffcolor = (picture_1_Pointer+i)->r;
+                    greendiffcolor = (picture_1_Pointer+i)->g;
+                    bluediffcolor = (picture_1_Pointer+i)->b;
+                }
+                
+                (picture_edit_Pointer+i)->r = reddiffcolor;
+                (picture_edit_Pointer+i)->g = greendiffcolor;
+                (picture_edit_Pointer+i)->b = bluediffcolor;
+            }
+        }
+        
+/* ---- ALGORITHM (2) ---- */
+        
+        if (algorithm_code_number == 2)
+        {
             for (i = 0; i < width_pic_1*height_pic_1; i++)
             {
                 diffcolor = (((picture_1_Pointer+i)->r + (picture_1_Pointer+i)->g + (picture_1_Pointer+i)->b) -
@@ -471,17 +580,172 @@ int main (int argc, char *argv[])
                 }
                 else
                 {
-                    (picture_edit_Pointer+i)->r = 0;
-                    (picture_edit_Pointer+i)->g = 0;
-                    (picture_edit_Pointer+i)->b = 0;
+                    (picture_edit_Pointer+i)->r = (picture_1_Pointer+i)->r;
+                    (picture_edit_Pointer+i)->g = (picture_1_Pointer+i)->g;
+                    (picture_edit_Pointer+i)->b = (picture_1_Pointer+i)->b;
+                }
+            }
+        }
+        
+        printf(BOLD"* Done Checking Color Channels!\n\n"RESET);
+        
+/* ---- WRITE HEADER INTO OUTPUT FILE ---- */
+        
+        printf(BOLD"* Writing file....\n"RESET);
+        
+        fprintf(pFout_1, "P3\n");
+        fprintf(pFout_1, "#Color Image Subtraction by Sebastian Dichler\n");
+        fprintf(pFout_1, "%u %u\n", width_pic_1, height_pic_1);
+        fprintf(pFout_1, "%u\n", max_color_1);
+        
+/* ---- WRITING PIXELS INTO OUTPUT FILE ---- */
+        
+        for (i = 0; i < width_pic_1*height_pic_1; i++)
+        {
+            fprintf(pFout_1, "%u %u %u\n",
+                    (picture_edit_Pointer+i)->r, (picture_edit_Pointer+i)->g, (picture_edit_Pointer+i)->b);
+        }
+        
+        printf(BOLD"* Done writing file!\n\n"RESET);
+        
+/*------------------------------------------------------------------*/
+/* A L G O R I T H M   2   -   B L A C K                            */
+/*------------------------------------------------------------------*/
+        
+        if (second_file == 1)
+        {
+            printf(BOLD"Creating Picture 2:\n\n"RESET);
+
+            printf(BOLD"* Checking Color Channels...\n"RESET);
+            
+/* ---- DEFAULT ALGORITHM (0) ---- */
+            
+            if (algorithm_code_number == 0)
+            {
+                for(int i = 0; i < width_pic_1*height_pic_1; i++)
+                {
+                    reddiffcolor = abs((picture_1_Pointer+i)->r - (picture_2_Pointer+i)->r);
+                    greendiffcolor = abs((picture_1_Pointer+i)->g - (picture_2_Pointer+i)->g);
+                    bluediffcolor = abs((picture_1_Pointer+i)->b - (picture_2_Pointer+i)->b);
+                    
+                    if(reddiffcolor < threshold)
+                    {
+                        if(greendiffcolor < threshold)
+                        {
+                            if(bluediffcolor < threshold)
+                            {
+                                reddiffcolor = 0;
+                                greendiffcolor = 0;
+                                bluediffcolor = 0;
+                            }
+                            else
+                            {
+                                reddiffcolor = redChannel;
+                                greendiffcolor = greenChannel;
+                                bluediffcolor = blueChannel;
+                            }
+                        }
+                        else
+                        {
+                            reddiffcolor = redChannel;
+                            greendiffcolor = greenChannel;
+                            bluediffcolor = blueChannel;
+                        }
+                    }
+                    else
+                    {
+                        reddiffcolor = redChannel;
+                        greendiffcolor = greenChannel;
+                        bluediffcolor = blueChannel;
+                    }
+                    
+                    (picture_edit_Pointer+i)->r = reddiffcolor;
+                    (picture_edit_Pointer+i)->g = greendiffcolor;
+                    (picture_edit_Pointer+i)->b = bluediffcolor;
+                }
+
+            }
+            
+/* ---- ALGORITHM (1) ---- */
+            
+            if (algorithm_code_number == 1)
+            {
+                for(int i = 0; i < width_pic_1*height_pic_1; i++)
+                {
+                    reddiffcolor = abs((picture_2_Pointer+i)->r - (picture_1_Pointer+i)->r);
+                    greendiffcolor = abs((picture_2_Pointer+i)->g - (picture_1_Pointer+i)->g);
+                    bluediffcolor = abs((picture_2_Pointer+i)->b - (picture_1_Pointer+i)->b);
+                    
+                    if(reddiffcolor < threshold)
+                    {
+                        if(greendiffcolor < threshold)
+                        {
+                            if(bluediffcolor < threshold)
+                            {
+                                reddiffcolor = 0;
+                                greendiffcolor = 0;
+                                bluediffcolor = 0;
+                            }
+                            else
+                            {
+                                reddiffcolor = (picture_1_Pointer+i)->r;
+                                greendiffcolor = (picture_1_Pointer+i)->g;
+                                bluediffcolor = (picture_1_Pointer+i)->b;
+                            }
+                        }
+                        else
+                        {
+                            reddiffcolor = (picture_1_Pointer+i)->r;
+                            greendiffcolor = (picture_1_Pointer+i)->g;
+                            bluediffcolor = (picture_1_Pointer+i)->b;
+                        }
+                    }
+                    else
+                    {
+                        reddiffcolor = (picture_1_Pointer+i)->r;
+                        greendiffcolor = (picture_1_Pointer+i)->g;
+                        bluediffcolor = (picture_1_Pointer+i)->b;
+                    }
+                    
+                    (picture_edit_Pointer+i)->r = reddiffcolor;
+                    (picture_edit_Pointer+i)->g = greendiffcolor;
+                    (picture_edit_Pointer+i)->b = bluediffcolor;
                 }
             }
             
-            printf(BOLD"Done Checking Color Channels!\n\n"RESET);
+/* ---- ALGORITHM (2) ---- */
+            
+            if (algorithm_code_number == 2)
+            {
+                for (i = 0; i < width_pic_1*height_pic_1; i++)
+                {
+                    diffcolor = (((picture_1_Pointer+i)->r + (picture_1_Pointer+i)->g + (picture_1_Pointer+i)->b) -
+                                 ((picture_2_Pointer+i)->r + (picture_2_Pointer+i)->g + (picture_2_Pointer+i)->b));
+                    
+                    diffcolor = abs(diffcolor);
+                    //diffcolor = diffcolor&0x7FFFFFFF;
+                    
+                    if (diffcolor > threshold)
+                    {
+                        (picture_edit_Pointer+i)->r = redChannel;
+                        (picture_edit_Pointer+i)->g = greenChannel;
+                        (picture_edit_Pointer+i)->b = blueChannel;
+                    }
+                    else
+                    {
+                        (picture_edit_Pointer+i)->r = 0;
+                        (picture_edit_Pointer+i)->g = 0;
+                        (picture_edit_Pointer+i)->b = 0;
+                    }
+                }
+            }
+
+            
+            printf(BOLD"* Done Checking Color Channels!\n\n"RESET);
             
 /* ---- WRITE HEADER INTO OUTPUT FILE ---- */
             
-            printf(BOLD"Writing file....\n"RESET);
+            printf(BOLD"* Writing file....\n"RESET);
             
             fprintf(pFout_2, "P3\n");
             fprintf(pFout_2, "#Color Image Subtraction by Sebastian Dichler\n");
@@ -496,7 +760,7 @@ int main (int argc, char *argv[])
                         (picture_edit_Pointer+i)->r, (picture_edit_Pointer+i)->g, (picture_edit_Pointer+i)->b);
             }
             
-            printf(BOLD"Done writing file!\n\n"RESET);
+            printf(BOLD"* Done writing file!\n"RESET);
         }
     }
     else

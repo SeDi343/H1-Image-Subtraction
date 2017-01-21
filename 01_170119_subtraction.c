@@ -72,7 +72,7 @@ int main (int argc, char *argv[])
     int diffcolor = 0;
     
     int threshold = 0;
-    int threshold_percent = 10;
+    int threshold_percent = 20;
     
     char algorithm_code[STRINGLENGTH];
     int algorithm_code_number = 0;

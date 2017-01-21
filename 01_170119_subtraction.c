@@ -89,7 +89,6 @@ int main (int argc, char *argv[])
 /* P A R A M E T E R   C H E C K                                    */
 /*------------------------------------------------------------------*/
     
-    clear();
     
 /* ---- CHECK FOR INPUT PARAMETERS ---- */
     
@@ -107,6 +106,8 @@ int main (int argc, char *argv[])
                 
                 if (pFin_1 == NULL)
                 {
+                    clear();
+                    
                     printf(BOLD"\nERROR: Can't open file %s\n"RESET, inputFile1);
                     
                     closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
@@ -125,6 +126,8 @@ int main (int argc, char *argv[])
                 
                 if (pFin_2 == NULL)
                 {
+                    clear();
+                    
                     printf(BOLD"\nERROR: Can't open file %s\n"RESET, inputFile2);
                     
                     closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
@@ -143,6 +146,8 @@ int main (int argc, char *argv[])
                 
                 if (pFout_1 == NULL)
                 {
+                    clear();
+
                     printf(BOLD"\nERROR: Can't create file %s\n"RESET, outputFile1);
                     
                     closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
@@ -163,6 +168,8 @@ int main (int argc, char *argv[])
                 
                 if (pFout_2 == NULL)
                 {
+                    clear();
+
                     printf(BOLD"\nERROR: Can't create file %s\n"RESET, outputFile2);
                     
                     closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
@@ -260,6 +267,8 @@ int main (int argc, char *argv[])
     
     if (error == 1)
     {
+        clear();
+
         printf(BOLD"\nERROR: One or more Parameters are not correct.\n"RESET);
         
         closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
@@ -271,6 +280,8 @@ int main (int argc, char *argv[])
     
     if (pFin_1 == NULL || pFin_2 == NULL || counterParameter != 3)
     {
+        clear();
+
         printf(BOLD"\nERROR: Both Inputfiles and Outputfile must be present.\n"RESET);
         
         closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
@@ -282,6 +293,8 @@ int main (int argc, char *argv[])
     
     if (pFout_1 == NULL)
     {
+        clear();
+
         printf(BOLD"\nERROR: Parameter -o requires an argument.\n"RESET);
         
         closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
@@ -295,6 +308,8 @@ int main (int argc, char *argv[])
     {
         if (pFout_2 == NULL)
         {
+            clear();
+
             printf(BOLD"\nERROR: Parameter -n requires an argument.\n"RESET);
             
             closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
@@ -307,6 +322,8 @@ int main (int argc, char *argv[])
     
     if (threshold_percent > 100 || threshold_percent < 0)
     {
+        clear();
+
         printf(BOLD"\nERROR: Threshold must be 0 to 100. Your input: %d\n"RESET, threshold_percent);
         
         closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
@@ -318,6 +335,8 @@ int main (int argc, char *argv[])
     
     if (algorithm_code_number != 0 && algorithm_code_number != 1 && algorithm_code_number != 2)
     {
+        clear();
+
         printf(BOLD"\nERROR: Algorithm code number can only be 0, 1 or 2. Your input: %d\n"RESET, algorithm_code_number);
         
         closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
@@ -330,6 +349,8 @@ int main (int argc, char *argv[])
     printf(RED ITALIC" * Threshold percent: %d\n * Algorithm code: %d\n * Second File (1): %d\n"RESET,
            threshold_percent, algorithm_code_number, second_file);
 #endif
+    
+    clear();
     
 /*------------------------------------------------------------------*/
 /* R E A D I N G   F I L E                                          */

@@ -2,7 +2,6 @@
  *
  * \author Sebastian Dichler <el16b032@technikum-wien.at><sedi343@gmail.com>
  *
- *
  */
 
 #include "myHeader.h"
@@ -44,10 +43,10 @@ void helpdesk_1(void)
     printf(BOLD"IMAGE SUBTRACTION @ v1.0\n"RESET);
     printf(BOLD"Created by Sebastian Dichler, 2017\n"RESET);
     printf("Format input:\t"BOLD"subtract.out <-f FILENAME> <-s FILENAME> <-o FILENAME>\n"RESET);
-    printf("Use \"-h\" for more information.\n\n");
+    printf("Use \""BOLD"-h"RESET"\" for more information.\n\n");
     
 #if DEBUG
-    printf(BOLDRED"*** DEBUG MODE ACTIVE ***\n\n"RESET);
+    printf(BOLDRED ITALIC"*** DEBUG MODE ACTIVE ***\n\n"RESET);
 #endif
 }
 
@@ -57,15 +56,16 @@ void helpdesk_2(void)
     printf(BOLD"IMAGE SUBTRACTION @ v1.0\n"RESET);
     printf(BOLD"Created by Sebastian Dichler, 2017\n"RESET);
     printf("Format input:\t"BOLD"subtract.out <-f FILENAME> <-s FILENAME> <-o FILENAME>\n\n"RESET);
-    printf("Required Parameters:\n");
+    printf(ITALIC"Required Parameters:\n"RESET);
     printf(BOLD"<-f FILENAME>"RESET"\tIt specifies the first input file.\n");
     printf(BOLD"<-s FILENAME>"RESET"\tIt specifies the second input file.\n");
     printf(BOLD"<-o FILENAME>"RESET"\tIt specifies the output file. ("BOLD"colored"RESET")\n\n");
-    printf("Optional Parameters:\n");
+    printf(ITALIC"Optional Parameters:\n"RESET);
     printf(BOLD"[-n FILENAME]"RESET"\tIt specifies the second output file. ("BOLD"black"RESET")\n");
-    printf(BOLD"[-a NUMBER]"RESET"\tChange output algorithm "BOLD"0"RESET" is default or "BOLD"1"RESET"\n");
-    printf("\t\tUse "BOLD"0"RESET" for changed object white(depends on RGB input) and everything else colored/black.\n");
-    printf("\t\tUse "BOLD"1"RESET" for changed object colored and everything else white(depends on RGB input)/black.\n");
+    printf(BOLD"[-a NUMBER]"RESET"\tChange output algorithm "BOLD"0"RESET" is default, "BOLD"1"RESET" or "BOLD"2"RESET"\n");
+    printf("\t\tUse "BOLD"0"RESET" for changed object white(depends on RGB input) and everything else colored/black. (justcolor)\n");
+    printf("\t\tUse "BOLD"1"RESET" for changed object colored and everything else white(depends on RGB input)/black. (justcolor)\n");
+    printf("\t\tUse "BOLD"2"RESET" for changed object white(depends on RGB input) and everything else colored/black. (fullpixel)\n");
     printf(BOLD"[-t THRESHOLD]"RESET"\tValue between "BOLD"0"RESET" and "BOLD"100"RESET".\n");
     printf(BOLD"[-r RED]"RESET"\tSpecify the "BOLD"RED"RESET" color value for the difference area to be filled in.\n");
     printf(BOLD"[-g GREEN]"RESET"\tSpecify the "BOLD"GREEN"RESET" color value for the difference area to be filled in.\n");
@@ -73,7 +73,7 @@ void helpdesk_2(void)
     printf(BOLD"[-h]"RESET"\t\tPrints a help message.\n\n");
     
 #if DEBUG
-    printf(BOLDRED"*** DEBUG MODE ACTIVE ***\n\n"RESET);
+    printf(BOLDRED ITALIC"*** DEBUG MODE ACTIVE ***\n\n"RESET);
 #endif
 }
 
@@ -213,7 +213,7 @@ int clearOptarg(char *string, char *input)
     strncpy(string, input, strlen(input));
     string[strlen(input)] = '\0';
     
-    if (strlen(string) > STRINGLENGTH)
+    if (strlen(string) >= STRINGLENGTH)
     {
         printf(BOLD"\nERROR: Parameterinput is too long!\n"RESET);
         return 1;

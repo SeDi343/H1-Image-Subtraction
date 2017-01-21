@@ -23,7 +23,8 @@
  *          Rev.: 08, 21.01.2017 - Changed algorythm -> Helmut helped me with that
  *          Rev.: 09, 21.01.2017 - Adding some algorythms
  *
- * \information Tested on macOS Sierra 10.12.2, ubuntu 12.04,
+ * \information Tested on macOS Sierra 10.12.2, ubuntu 12.04, raspi3pixel 4.4.38-v7+
+ *
  */
 
 #include "myHeader.h"
@@ -311,7 +312,7 @@ int main (int argc, char *argv[])
         return -1;
     }
     
-/* ---- ALGORITHM CODE NUMBER NOT 0 OR 1 ---- */
+/* ---- ALGORITHM CODE NUMBER NOT 0, 1 OR 2 ---- */
     
     if (algorithm_code_number != 0 && algorithm_code_number != 1 && algorithm_code_number != 2)
     {
@@ -324,7 +325,7 @@ int main (int argc, char *argv[])
     
     
 #if DEBUG
-    printf(RED" * Threshold percent: %d\n * Algorithm code: %d\n * Second File (1): %d\n"RESET,
+    printf(RED ITALIC" * Threshold percent: %d\n * Algorithm code: %d\n * Second File (1): %d\n"RESET,
            threshold_percent, algorithm_code_number, second_file);
 #endif
     
@@ -346,8 +347,8 @@ int main (int argc, char *argv[])
     //fgets(id_2,80,pFin_2);
     
 #if DEBUG
-    printf(RED"%s: %#01x %#01x %#01x\n"RESET, id_1, id_1[0], id_1[1], id_1[2]);
-    printf(RED"%s: %#01x %#01x %#01x\n"RESET, id_2, id_2[0], id_2[1], id_2[2]);
+    printf(RED ITALIC" * %s: %#01x %#01x %#01x\n"RESET, id_1, id_1[0], id_1[1], id_1[2]);
+    printf(RED ITALIC" * %s: %#01x %#01x %#01x\n"RESET, id_2, id_2[0], id_2[1], id_2[2]);
 #endif
     
     if ((id_1[0] == 'P' && id_1[1] == '3') && (id_2[0] == 'P' && id_2[1] == '3'))
@@ -456,12 +457,12 @@ int main (int argc, char *argv[])
         threshold = (threshold_percent * max_color_1) / 100;
         
 #if DEBUG
-        printf(RED" * Threshold: %d\n"RESET, threshold);
+        printf(RED ITALIC" * Threshold: %d\n"RESET, threshold);
 #endif
         
         if (second_file == 1)
         {
-            printf(BOLD"Creating Picture 1:\n\n"RESET);
+            printf(BOLD ITALIC"Creating Picture 1:\n"RESET);
         }
         
         printf(BOLD"* Checking Color Channels...\n"RESET);
@@ -614,7 +615,7 @@ int main (int argc, char *argv[])
         
         if (second_file == 1)
         {
-            printf(BOLD"Creating Picture 2:\n\n"RESET);
+            printf(BOLD ITALIC"Creating Picture 2:\n"RESET);
 
             printf(BOLD"* Checking Color Channels...\n"RESET);
             

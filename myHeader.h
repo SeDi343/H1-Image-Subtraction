@@ -6,6 +6,9 @@
  *
  * \version Rev.: 01, 17.12.2016 - Created
  *          Rev.: 02, 17.12.2016 - Adding function clear, clearNoHelp, clearString
+ *          Rev:: 03, 19.01.2016 - Added some defines, new terminal output formats
+ *                                 helpdeks, removecomment, check_number, clearOptarg
+ *                                 and closefiles function
  *
  */
 
@@ -23,7 +26,7 @@
 #include <unistd.h>
 
 #define DEBUG 0
-#define STRINGLENGTH 100
+#define STRINGLENGTH 500
 
 #define FILE_1 pFin_1, pFin_2, pFout_1, pFout_2, picture_1_Pointer, picture_2_Pointer, picture_edit_Pointer, second_file
 #define FILE_2 pFin_2, pFin_1, pFout_1, pFout_2, picture_1_Pointer, picture_2_Pointer, picture_edit_Pointer, second_file

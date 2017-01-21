@@ -335,8 +335,8 @@ int main (int argc, char *argv[])
 
 /* ---- CHECK FOR P3 ---- */
     
-    fscanf(pFin_1, "%s", id_1);
-    fscanf(pFin_2, "%s", id_2);
+    fscanf(pFin_1, "%79s", id_1);
+    fscanf(pFin_2, "%79s", id_2);
 
 /* ---- FSCANF DOESNT READ THE LAST CHAR IN A STRING EG "\n" ---- */
 

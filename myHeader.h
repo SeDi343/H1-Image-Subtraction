@@ -2,7 +2,7 @@
  *
  * \description Headerfile for useful functions
  *
- * \author Sebastian Dichler <el16b032@technikum-wien.at><sedi343@gmail.com>
+ * \author Sebastian Dichler <el16b032@technikum-wien.at> <sedi343@gmail.com>
  *
  * \version Rev.: 01, 17.12.2016 - Created
  *          Rev.: 02, 17.12.2016 - Adding function clear, clearNoHelp, clearString

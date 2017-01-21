@@ -20,7 +20,7 @@
  *                                 added function to clear the oparg string
  *                                 as well added if to check if you use both output
  *                                 files to close files you realy just use
- *          Rev.: 08, 21.01.2017 - Changed algorithm -> HELMUT helped me with that
+ *          Rev.: 08, 21.01.2017 - Changed algorithm
  *          Rev.: 09, 21.01.2017 - Adding some algorythms
  *          Rev.: 10, 21.01.2017 - Adding check of return value of fscanf reading string
  *                                 and changing removecomment function
@@ -689,7 +689,7 @@ int main (int argc, char *argv[])
         
         printf(BOLD"* Checking Color Channels...\n"RESET);
         
-/* ---- DEFAULT ALGORITHM (0) ---- */
+/* ---- DEFAULT ALGORITHM (0) HELMUT RESCH HELPED ME WITH THIS CODE SEGMENT ---- */
         
         if (algorithm_code_number == 0)
         {

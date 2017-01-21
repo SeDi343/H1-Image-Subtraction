@@ -473,9 +473,13 @@ int main (int argc, char *argv[])
         {
             for(i = 0; i < width_pic_1*height_pic_1; i++)
             {
-                reddiffcolor = abs((picture_2_Pointer+i)->r - (picture_1_Pointer+i)->r);
-                greendiffcolor = abs((picture_2_Pointer+i)->g - (picture_1_Pointer+i)->g);
-                bluediffcolor = abs((picture_2_Pointer+i)->b - (picture_1_Pointer+i)->b);
+                reddiffcolor = (picture_2_Pointer+i)->r - (picture_1_Pointer+i)->r;
+                greendiffcolor = (picture_2_Pointer+i)->g - (picture_1_Pointer+i)->g;
+                bluediffcolor = (picture_2_Pointer+i)->b - (picture_1_Pointer+i)->b;
+                
+                reddiffcolor = abs(reddiffcolor);
+                greendiffcolor = abs(greendiffcolor);
+                bluediffcolor = abs(bluediffcolor);
                 
                 if(reddiffcolor < threshold)
                 {
@@ -520,9 +524,13 @@ int main (int argc, char *argv[])
         {
             for(i = 0; i < width_pic_1*height_pic_1; i++)
             {
-                reddiffcolor = abs((picture_2_Pointer+i)->r - (picture_1_Pointer+i)->r);
-                greendiffcolor = abs((picture_2_Pointer+i)->g - (picture_1_Pointer+i)->g);
-                bluediffcolor = abs((picture_2_Pointer+i)->b - (picture_1_Pointer+i)->b);
+                reddiffcolor = (picture_2_Pointer+i)->r - (picture_1_Pointer+i)->r;
+                greendiffcolor = (picture_2_Pointer+i)->g - (picture_1_Pointer+i)->g;
+                bluediffcolor = (picture_2_Pointer+i)->b - (picture_1_Pointer+i)->b;
+                
+                reddiffcolor = abs(reddiffcolor);
+                greendiffcolor = abs(greendiffcolor);
+                bluediffcolor = abs(bluediffcolor);
                 
                 if(reddiffcolor < threshold)
                 {
@@ -625,9 +633,13 @@ int main (int argc, char *argv[])
             {
                 for(int i = 0; i < width_pic_1*height_pic_1; i++)
                 {
-                    reddiffcolor = abs((picture_1_Pointer+i)->r - (picture_2_Pointer+i)->r);
-                    greendiffcolor = abs((picture_1_Pointer+i)->g - (picture_2_Pointer+i)->g);
-                    bluediffcolor = abs((picture_1_Pointer+i)->b - (picture_2_Pointer+i)->b);
+                    reddiffcolor = (picture_1_Pointer+i)->r - (picture_2_Pointer+i)->r;
+                    greendiffcolor = (picture_1_Pointer+i)->g - (picture_2_Pointer+i)->g;
+                    bluediffcolor = (picture_1_Pointer+i)->b - (picture_2_Pointer+i)->b;
+                    
+                    reddiffcolor = abs(reddiffcolor);
+                    greendiffcolor = abs(greendiffcolor);
+                    bluediffcolor = abs(bluediffcolor);
                     
                     if(reddiffcolor < threshold)
                     {
@@ -673,9 +685,13 @@ int main (int argc, char *argv[])
             {
                 for(int i = 0; i < width_pic_1*height_pic_1; i++)
                 {
-                    reddiffcolor = abs((picture_2_Pointer+i)->r - (picture_1_Pointer+i)->r);
-                    greendiffcolor = abs((picture_2_Pointer+i)->g - (picture_1_Pointer+i)->g);
-                    bluediffcolor = abs((picture_2_Pointer+i)->b - (picture_1_Pointer+i)->b);
+                    reddiffcolor = (picture_2_Pointer+i)->r - (picture_1_Pointer+i)->r;
+                    greendiffcolor = (picture_2_Pointer+i)->g - (picture_1_Pointer+i)->g;
+                    bluediffcolor = (picture_2_Pointer+i)->b - (picture_1_Pointer+i)->b;
+                    
+                    reddiffcolor = abs(reddiffcolor);
+                    greendiffcolor = abs(greendiffcolor);
+                    bluediffcolor = abs(bluediffcolor);
                     
                     if(reddiffcolor < threshold)
                     {

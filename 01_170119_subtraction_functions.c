@@ -77,7 +77,7 @@ void helpdesk_2(void)
 #endif
 }
 
-/* ---- REMOVE COMMENT FUNCTION ---- */ //Umprogrammieren mit fgetc ein zeichen einlesen wenn # solang einlesen bis \n
+/* ---- REMOVE COMMENT FUNCTION ---- */
 
 int removecomment(FILE *pFin, FILE *pFin2, FILE *pFout, FILE *pFout2, struct picture *Pointer_1, struct picture *Pointer_2, struct picture *Pointer_3, int second_file)
 {
@@ -111,26 +111,6 @@ int removecomment(FILE *pFin, FILE *pFin2, FILE *pFout, FILE *pFout2, struct pic
         return -1;
     }
     
-    if (comment[strlen(comment)-1] != '\n' && comment[0] == '#')
-    {
-        if (Pointer_1 != NULL || Pointer_2 != NULL || Pointer_3 != NULL)
-        {
-            free(Pointer_1);
-            free(Pointer_2);
-            free(Pointer_3);
-        }
-        
-        fclose(pFin);
-        fclose(pFin2);
-        fclose(pFout);
-        if (second_file == 1)
-        {
-            fclose(pFout2);
-        }
-        
-        return -1;
-    }
-    
     if (comment[0] != '#')
     {
         fsetpos(pFin,&position);
@@ -146,26 +126,6 @@ int removecomment(FILE *pFin, FILE *pFin2, FILE *pFout, FILE *pFout2, struct pic
             {
                 printf(BOLD"\nERROR: Header Comment in file to long.\n"RESET);
                 
-                if (Pointer_1 != NULL || Pointer_2 != NULL || Pointer_3 != NULL)
-                {
-                    free(Pointer_1);
-                    free(Pointer_2);
-                    free(Pointer_3);
-                }
-                
-                fclose(pFin);
-                fclose(pFin2);
-                fclose(pFout);
-                if (second_file == 1)
-                {
-                    fclose(pFout2);
-                }
-                
-                return -1;
-            }
-            
-            if (comment[strlen(comment)-1] != '\n')
-            {
                 if (Pointer_1 != NULL || Pointer_2 != NULL || Pointer_3 != NULL)
                 {
                     free(Pointer_1);

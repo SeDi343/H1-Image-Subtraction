@@ -81,13 +81,13 @@ void helpdesk_2(void)
 
 int removecomment(FILE *pFin, FILE *pFin2, FILE *pFout, FILE *pFout2, struct picture *Pointer_1, struct picture *Pointer_2, struct picture *Pointer_3, int second_file)
 {
-    char comment[500];
+    char comment[STRINGLENGTH];
     
     fpos_t position;
     
     fgetpos(pFin, &position);
     
-    fgets(comment, 500, pFin);
+    fgets(comment, STRINGLENGTH, pFin);
     
     if (comment[strlen(comment)-1] != '\n' && comment[0] == '#')
     {
@@ -120,7 +120,7 @@ int removecomment(FILE *pFin, FILE *pFin2, FILE *pFout, FILE *pFout2, struct pic
         while (comment[0] == '#')
         {
             fgetpos(pFin, &position);
-            fgets(comment, 500, pFin);
+            fgets(comment, STRINGLENGTH, pFin);
             
             if (comment[strlen(comment)-1] != '\n' && comment[0] == '#')
             {

@@ -63,9 +63,9 @@ void helpdesk_2(void)
     printf(ITALIC"Optional Parameters:\n"RESET);
     printf(BOLD"[-n FILENAME]"RESET"\tIt specifies the second output file. ("BOLD"black"RESET")\n");
     printf(BOLD"[-a NUMBER]"RESET"\tChange output algorithm "BOLD"0"RESET" is default, "BOLD"1"RESET" or "BOLD"2"RESET"\n");
-    printf("\t\tUse "BOLD"0"RESET" for changed object white(depends on RGB input) and everything else colored/black. (justcolor)\n");
-    printf("\t\tUse "BOLD"1"RESET" for changed object colored and everything else white(depends on RGB input)/black. (justcolor)\n");
-    printf("\t\tUse "BOLD"2"RESET" for changed object white(depends on RGB input) and everything else colored/black. (fullpixel)\n");
+    printf("\t\tUse "BOLD"0"RESET" for changed object white(depends on RGB input)and everything else\n\t\tcolored/black. (justcolor)\n");
+    printf("\t\tUse "BOLD"1"RESET" for changed object colored and everything else white\n\t\t(depends on RGB input)/black. (justcolor)\n");
+    printf("\t\tUse "BOLD"2"RESET" for changed object white(depends on RGB input) and everything else\n\t\tcolored/black. (fullpixel)\n");
     printf(BOLD"[-t THRESHOLD]"RESET"\tValue between "BOLD"0"RESET" and "BOLD"100"RESET".\n");
     printf(BOLD"[-r RED]"RESET"\tSpecify the "BOLD"RED"RESET" color value for the difference area to be filled in.\n");
     printf(BOLD"[-g GREEN]"RESET"\tSpecify the "BOLD"GREEN"RESET" color value for the difference area to be filled in.\n");

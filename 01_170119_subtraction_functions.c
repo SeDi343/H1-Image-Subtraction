@@ -47,7 +47,7 @@ void helpdesk_1(void)
     printf("Use \"-h\" for more information.\n\n");
     
 #if DEBUG
-    printf(BOLDRED"DEBUG MODE ACTIVE!!!\n\n"RESET);
+    printf(BOLDRED"*** DEBUG MODE ACTIVE ***\n\n"RESET);
 #endif
 }
 
@@ -63,6 +63,9 @@ void helpdesk_2(void)
     printf(BOLD"<-o FILENAME>"RESET"\tIt specifies the output file. ("BOLD"colored"RESET")\n\n");
     printf("Optional Parameters:\n");
     printf(BOLD"[-n FILENAME]"RESET"\tIt specifies the second output file. ("BOLD"black"RESET")\n");
+    printf(BOLD"[-a NUMBER]"RESET"\tChange output algorithm "BOLD"0"RESET" is default or "BOLD"1"RESET"\n");
+    printf("\t\tUse "BOLD"0"RESET" for changed object white(depends on RGB input) and everything else colored/black.\n");
+    printf("\t\tUse "BOLD"1"RESET" for changed object colored and everything else white(depends on RGB input)/black.\n");
     printf(BOLD"[-t THRESHOLD]"RESET"\tValue between "BOLD"0"RESET" and "BOLD"100"RESET".\n");
     printf(BOLD"[-r RED]"RESET"\tSpecify the "BOLD"RED"RESET" color value for the difference area to be filled in.\n");
     printf(BOLD"[-g GREEN]"RESET"\tSpecify the "BOLD"GREEN"RESET" color value for the difference area to be filled in.\n");
@@ -70,7 +73,7 @@ void helpdesk_2(void)
     printf(BOLD"[-h]"RESET"\t\tPrints a help message.\n\n");
     
 #if DEBUG
-    printf(BOLDRED"DEBUG MODE ACTIVE!!!\n\n"RESET);
+    printf(BOLDRED"*** DEBUG MODE ACTIVE ***\n\n"RESET);
 #endif
 }
 
@@ -218,5 +221,30 @@ int clearOptarg(char *string, char *input)
     else
     {
         return 0;
+    }
+}
+
+/* ---- FUNCTION TO CLOSE FILES IF PROGRAM JUMPS INTO ERROR MESSAGE ---- */
+
+void closefiles(FILE *pFin1, FILE *pFin2, FILE *pFout1, FILE *pFout2, int second_file)
+{
+    if (pFin1 != NULL)
+    {
+        fclose(pFin1);
+    }
+    if (pFin2 != NULL)
+    {
+        fclose(pFin2);
+    }
+    if (pFout1 != NULL)
+    {
+        fclose(pFout1);
+    }
+    if (second_file == 1)
+    {
+        if (pFout2 != NULL)
+        {
+            fclose(pFout2);
+        }
     }
 }

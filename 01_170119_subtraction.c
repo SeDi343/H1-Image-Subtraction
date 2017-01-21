@@ -3,7 +3,7 @@
  * \description a program to subtrace one image with the information of another
  *              picture
  *
- * \author Sebastian Dichler <el16b032@technikum-wien.at>
+ * \author Sebastian Dichler <el16b032@technikum-wien.at> <sedi343@gmail.com>
  *
  * \version Rev.: 01, 19.01.2017 - Created
  *          Rev.: 02, 19.01.2017 - Writing code for image input into buffer.
@@ -13,15 +13,21 @@
  *                                 for save free() of both pointers.
  *          Rev.: 05, 19.01.2017 - New structure of the code, changing functions
  *                                 eg. the removecomment
- *          Rev.: 06, 19.01.2017 - Adding first thoughts about the algorithm
+ *          Rev.: 06, 19.01.2017 - Adding first thoughts to the algorithm
  *          Rev.: 07, 20.01.2017 - Adding 2nd output, everything is black, without
  *                                 the changed object.
  *          Rev.: 07, 20.01.2017 - Changing full removecomment function and
  *                                 added function to clear the oparg string
  *                                 as well added if to check if you use both output
  *                                 files to close files you realy just use
- *          Rev.: 08, 21.01.2017 - Changed algorythm -> Helmut helped me with that
+ *          Rev.: 08, 21.01.2017 - Changed algorithm -> HELMUT helped me with that
  *          Rev.: 09, 21.01.2017 - Adding some algorythms
+ *          Rev.: 10, 21.01.2017 - Adding check of return value of fscanf reading string
+ *                                 and changing removecomment function
+ *          Rev.: 11, 21.01.2017 - Removing major bug in removecomment function,
+ *                                 somehow return -1 isn't canceling program,
+ *                                 checking return value of every removecomment()
+ *                                 request
  *
  * \information Tested on macOS Sierra 10.12.2, ubuntu 12.04, raspi3pixel 4.4.38-v7+
  *
@@ -383,8 +389,22 @@ int main (int argc, char *argv[])
     
     if ((id_1[0] == 'P' && id_1[1] == '3') && (id_2[0] == 'P' && id_2[1] == '3'))
     {
-        removecomment(FILE_1);
-        removecomment(FILE_2);
+        error = removecomment(FILE_1);
+        
+        if (error == 1)
+        {
+            closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+            
+            return -1;
+        }
+        error = removecomment(FILE_2);
+        
+        if (error == 1)
+        {
+            closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+            
+            return -1;
+        }
 
 /* ---- READING WIDTH AND HEIGHT ---- */
         
@@ -394,8 +414,22 @@ int main (int argc, char *argv[])
         fscanf(pFin_2, "%u", &width_pic_2);
         fscanf(pFin_2, "%u", &height_pic_2);
         
-        removecomment(FILE_1);
-        removecomment(FILE_2);
+        error = removecomment(FILE_1);
+        
+        if (error == 1)
+        {
+            closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+            
+            return -1;
+        }
+        error = removecomment(FILE_2);
+        
+        if (error == 1)
+        {
+            closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+            
+            return -1;
+        }
         
 /* ---- READING MAX COLOR INDEX ---- */
         
@@ -461,7 +495,17 @@ int main (int argc, char *argv[])
         
         for (i = 0; i < width_pic_1*height_pic_1; i++)
         {
-            removecomment(FILE_1);
+            error = removecomment(FILE_1);
+            
+            if (error == 1)
+            {
+                free(picture_1_Pointer);
+                free(picture_2_Pointer);
+                free(picture_edit_Pointer);
+                closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+                
+                return -1;
+            }
             
             fscanf(pFin_1, "%u", &(picture_1_Pointer+i)->r);
             fscanf(pFin_1, "%u", &(picture_1_Pointer+i)->g);
@@ -470,7 +514,17 @@ int main (int argc, char *argv[])
         
         for (i = 0; i < width_pic_2*height_pic_2; i++)
         {
-            removecomment(FILE_2);
+            error = removecomment(FILE_2);
+            
+            if (error == 1)
+            {
+                free(picture_1_Pointer);
+                free(picture_2_Pointer);
+                free(picture_edit_Pointer);
+                closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+                
+                return -1;
+            }
 
             fscanf(pFin_2, "%u", &(picture_2_Pointer+i)->r);
             fscanf(pFin_2, "%u", &(picture_2_Pointer+i)->g);

@@ -16,15 +16,13 @@
 /* I N C L U D E   L I B R A R I E S                                */
 /*------------------------------------------------------------------*/
 
-/* ---- GOOD LINKER ONLY LINKS NEEDED FUNCTIONS OF LIBRARIES ---- */
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <unistd.h>
 
-#define DEBUG 1
+#define DEBUG 0
 #define STRINGLENGTH 100
 
 #define FILE_1 pFin_1, pFin_2, pFout_1, pFout_2, picture_1_Pointer, picture_2_Pointer, picture_edit_Pointer, second_file
@@ -96,9 +94,9 @@
 
 struct picture
 {
-    unsigned int r;
-    unsigned int g;
-    unsigned int b;
+    int r;
+    int g;
+    int b;
 };
 
 /*------------------------------------------------------------------*/
@@ -113,5 +111,6 @@ int removecomment(FILE *pFin, FILE *pFin2, FILE *pFout, FILE *pFout2, struct pic
 int check_number(char *number);
 unsigned int clearString(char *input);
 int clearOptarg(char *string, char *input);
+void closefiles(FILE *pFin1, FILE *pFin2, FILE *pFout1, FILE *pFout2, int second_file);
 
 #endif /* myHeader_h */

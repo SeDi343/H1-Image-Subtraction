@@ -745,23 +745,23 @@ int main (int argc, char *argv[])
                         }
                         else
                         {
-                            reddiffcolor = (picture_1_Pointer+i)->r;
-                            greendiffcolor = (picture_1_Pointer+i)->g;
-                            bluediffcolor = (picture_1_Pointer+i)->b;
+                            reddiffcolor = (picture_2_Pointer+i)->r;
+                            greendiffcolor = (picture_2_Pointer+i)->g;
+                            bluediffcolor = (picture_2_Pointer+i)->b;
                         }
                     }
                     else
                     {
-                        reddiffcolor = (picture_1_Pointer+i)->r;
-                        greendiffcolor = (picture_1_Pointer+i)->g;
-                        bluediffcolor = (picture_1_Pointer+i)->b;
+                        reddiffcolor = (picture_2_Pointer+i)->r;
+                        greendiffcolor = (picture_2_Pointer+i)->g;
+                        bluediffcolor = (picture_2_Pointer+i)->b;
                     }
                 }
                 else
                 {
-                    reddiffcolor = (picture_1_Pointer+i)->r;
-                    greendiffcolor = (picture_1_Pointer+i)->g;
-                    bluediffcolor = (picture_1_Pointer+i)->b;
+                    reddiffcolor = (picture_2_Pointer+i)->r;
+                    greendiffcolor = (picture_2_Pointer+i)->g;
+                    bluediffcolor = (picture_2_Pointer+i)->b;
                 }
                 
                 (picture_edit_Pointer+i)->r = reddiffcolor;
@@ -969,23 +969,23 @@ int main (int argc, char *argv[])
                             }
                             else
                             {
-                                reddiffcolor = (picture_1_Pointer+i)->r;
-                                greendiffcolor = (picture_1_Pointer+i)->g;
-                                bluediffcolor = (picture_1_Pointer+i)->b;
+                                reddiffcolor = (picture_2_Pointer+i)->r;
+                                greendiffcolor = (picture_2_Pointer+i)->g;
+                                bluediffcolor = (picture_2_Pointer+i)->b;
                             }
                         }
                         else
                         {
-                            reddiffcolor = (picture_1_Pointer+i)->r;
-                            greendiffcolor = (picture_1_Pointer+i)->g;
-                            bluediffcolor = (picture_1_Pointer+i)->b;
+                            reddiffcolor = (picture_2_Pointer+i)->r;
+                            greendiffcolor = (picture_2_Pointer+i)->g;
+                            bluediffcolor = (picture_2_Pointer+i)->b;
                         }
                     }
                     else
                     {
-                        reddiffcolor = (picture_1_Pointer+i)->r;
-                        greendiffcolor = (picture_1_Pointer+i)->g;
-                        bluediffcolor = (picture_1_Pointer+i)->b;
+                        reddiffcolor = (picture_2_Pointer+i)->r;
+                        greendiffcolor = (picture_2_Pointer+i)->g;
+                        bluediffcolor = (picture_2_Pointer+i)->b;
                     }
                     
                     (picture_edit_Pointer+i)->r = reddiffcolor;

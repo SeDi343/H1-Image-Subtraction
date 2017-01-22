@@ -110,7 +110,6 @@ int main (int argc, char *argv[])
                 error = clearOptarg(inputFile1, optarg);
                 
                 pFin_1 = fopen(inputFile1, "rb");
-                
                 if (pFin_1 == NULL)
                 {
                     clear();
@@ -130,7 +129,6 @@ int main (int argc, char *argv[])
                 error = clearOptarg(inputFile2, optarg);
                 
                 pFin_2 = fopen(inputFile2, "rb");
-                
                 if (pFin_2 == NULL)
                 {
                     clear();
@@ -150,7 +148,6 @@ int main (int argc, char *argv[])
                 error = clearOptarg(outputFile1, optarg);
                 
                 pFout_1 = fopen(outputFile1, "wb");
-                
                 if (pFout_1 == NULL)
                 {
                     clear();
@@ -172,7 +169,6 @@ int main (int argc, char *argv[])
                 second_file = 1;
                 
                 pFout_2 = fopen(outputFile2, "wb");
-                
                 if (pFout_2 == NULL)
                 {
                     clear();
@@ -391,7 +387,6 @@ int main (int argc, char *argv[])
     if ((id_1[0] == 'P' && id_1[1] == '3') && (id_2[0] == 'P' && id_2[1] == '3'))
     {
         error = removecomment(FILE_1);
-        
         if (error == 1)
         {
             closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
@@ -399,7 +394,6 @@ int main (int argc, char *argv[])
             return -1;
         }
         error = removecomment(FILE_2);
-        
         if (error == 1)
         {
             closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
@@ -410,7 +404,6 @@ int main (int argc, char *argv[])
 /* ---- READING WIDTH AND HEIGHT 1 ---- */
         
         returnvalue = fscanf(pFin_1, "%u", &width_pic_1);
-        
         if (returnvalue == 0)
         {
             printf(BOLD"\nERROR: Cant read input file.\n"RESET);
@@ -421,7 +414,6 @@ int main (int argc, char *argv[])
         }
         
         returnvalue = fscanf(pFin_1, "%u", &height_pic_1);
-        
         if (returnvalue == 0)
         {
             printf(BOLD"\nERROR: Cant read input file.\n"RESET);
@@ -434,7 +426,6 @@ int main (int argc, char *argv[])
 /* ---- READING WIDTH AND HEIGHT 2 ---- */
 
         returnvalue = fscanf(pFin_2, "%u", &width_pic_2);
-        
         if (returnvalue == 0)
         {
             printf(BOLD"\nERROR: Cant read input file.\n"RESET);
@@ -445,7 +436,6 @@ int main (int argc, char *argv[])
         }
         
         returnvalue = fscanf(pFin_2, "%u", &height_pic_2);
-        
         if (returnvalue == 0)
         {
             printf(BOLD"\nERROR: Cant read input file.\n"RESET);
@@ -458,7 +448,6 @@ int main (int argc, char *argv[])
 /* ---- REMOVING COMMENT IF PRESENT ---- */
         
         error = removecomment(FILE_1);
-        
         if (error == 1)
         {
             closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
@@ -466,7 +455,6 @@ int main (int argc, char *argv[])
             return -1;
         }
         error = removecomment(FILE_2);
-        
         if (error == 1)
         {
             closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
@@ -477,7 +465,6 @@ int main (int argc, char *argv[])
 /* ---- READING MAX COLOR INDEX ---- */
         
         returnvalue = fscanf(pFin_1, "%u", &max_color_1);
-        
         if (returnvalue == 0)
         {
             printf(BOLD"\nERROR: Cant read input file.\n"RESET);
@@ -488,7 +475,6 @@ int main (int argc, char *argv[])
         }
 
         returnvalue = fscanf(pFin_2, "%u", &max_color_2);
-        
         if (returnvalue == 0)
         {
             printf(BOLD"\nERROR: Cant read input file.\n"RESET);
@@ -557,7 +543,6 @@ int main (int argc, char *argv[])
         for (i = 0; i < width_pic_1*height_pic_1; i++)
         {
             error = removecomment(FILE_1);
-            
             if (error == 1)
             {
                 free(picture_1_Pointer);
@@ -569,7 +554,6 @@ int main (int argc, char *argv[])
             }
             
             returnvalue = fscanf(pFin_1, "%u", &(picture_1_Pointer+i)->r);
-            
             if (returnvalue == 0)
             {
                 printf(BOLD"\nERROR: Cant read input file.\n"RESET);
@@ -583,7 +567,6 @@ int main (int argc, char *argv[])
             }
             
             returnvalue = fscanf(pFin_1, "%u", &(picture_1_Pointer+i)->g);
-            
             if (returnvalue == 0)
             {
                 printf(BOLD"\nERROR: Cant read input file.\n"RESET);
@@ -597,7 +580,6 @@ int main (int argc, char *argv[])
             }
             
             returnvalue = fscanf(pFin_1, "%u", &(picture_1_Pointer+i)->b);
-            
             if (returnvalue == 0)
             {
                 printf(BOLD"\nERROR: Cant read input file.\n"RESET);
@@ -615,7 +597,6 @@ int main (int argc, char *argv[])
         for (i = 0; i < width_pic_2*height_pic_2; i++)
         {
             error = removecomment(FILE_2);
-            
             if (error == 1)
             {
                 free(picture_1_Pointer);
@@ -625,9 +606,8 @@ int main (int argc, char *argv[])
                 
                 return -1;
             }
-
-            returnvalue = fscanf(pFin_2, "%u", &(picture_2_Pointer+i)->r);
             
+            returnvalue = fscanf(pFin_2, "%u", &(picture_2_Pointer+i)->r);
             if (returnvalue == 0)
             {
                 printf(BOLD"\nERROR: Cant read input file.\n"RESET);
@@ -641,7 +621,6 @@ int main (int argc, char *argv[])
             }
             
             returnvalue = fscanf(pFin_2, "%u", &(picture_2_Pointer+i)->g);
-            
             if (returnvalue == 0)
             {
                 printf(BOLD"\nERROR: Cant read input file.\n"RESET);
@@ -655,7 +634,6 @@ int main (int argc, char *argv[])
             }
             
             returnvalue = fscanf(pFin_2, "%u", &(picture_2_Pointer+i)->b);
-            
             if (returnvalue == 0)
             {
                 printf(BOLD"\nERROR: Cant read input file.\n"RESET);
@@ -1131,6 +1109,10 @@ int main (int argc, char *argv[])
     else
     {
         printf(BOLD"\nERROR: Not supported data format.\n"RESET);
+#if DEBUG
+        printf(RED" * FILE1: %s\n"RESET, id_1);
+        printf(RED" * FILE2: %s\n"RESET, id_2);
+#endif
     }
     
     free(picture_1_Pointer);

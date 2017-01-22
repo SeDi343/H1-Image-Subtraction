@@ -89,7 +89,7 @@ int removecomment(FILE *pFin, FILE *pFin2, FILE *pFout, FILE *pFout2, struct pic
     
     fgets(comment, STRINGLENGTH, pFin);
     
-    if (comment[strlen(comment)-1] != '\n' && comment[0] == '#')
+    if (comment[strnlen(comment, STRINGLENGTH)-1] != '\n' && comment[0] == '#')
     {
         printf(BOLD"\nERROR: Header Comment in file to long.\n"RESET);
         
@@ -122,7 +122,7 @@ int removecomment(FILE *pFin, FILE *pFin2, FILE *pFout, FILE *pFout2, struct pic
             fgetpos(pFin, &position);
             fgets(comment, STRINGLENGTH, pFin);
             
-            if (comment[strlen(comment)-1] != '\n' && comment[0] == '#')
+            if (comment[strnlen(comment, STRINGLENGTH)-1] != '\n' && comment[0] == '#')
             {
                 printf(BOLD"\nERROR: Header Comment in file to long.\n"RESET);
                 
@@ -162,7 +162,7 @@ int check_number(char *number)
 {
     int i;
     
-    for (i = 0; i < strlen(number); i++)
+    for (i = 0; i < strnlen(number, STRINGLENGTH); i++)
     {
         if (number[i] == '.' || number[i] == ',')
         {
@@ -187,7 +187,7 @@ unsigned int clearString(char *input)
 {
     int i;
     
-    for (i = 0; i < strlen(input); i++)
+    for (i = 0; i < strnlen(input, STRINGLENGTH); i++)
     {
         if (input[i] == '\r')
         {
@@ -210,7 +210,7 @@ unsigned int clearString(char *input)
 
 int clearOptarg(char *string, char *input)
 {
-    strncpy(string, input, strlen(input));
+    strncpy(string, input, strnlen(input, STRINGLENGTH));
     string[strlen(input)] = '\0';
     
     if (strlen(string) >= STRINGLENGTH)

@@ -29,6 +29,7 @@
  *                                 checking return value of every removecomment()
  *                                 request
  *          Rev.: 12, 22.01.2017 - Checking every return value of every function
+ *          Rev.: 13, 22.01.2017 - Changing functions, theyre saver now
  *
  * \information Tested on macOS Sierra 10.12.2, ubuntu 12.04, raspi3pixel 4.4.38-v7+
  *

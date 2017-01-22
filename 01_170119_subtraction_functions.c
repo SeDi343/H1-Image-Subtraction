@@ -55,7 +55,8 @@ void helpdesk_2(void)
     printf("\n");
     printf(BOLD"IMAGE SUBTRACTION @ v1.0\n"RESET);
     printf(BOLD"Created by Sebastian Dichler, 2017\n"RESET);
-    printf("Format input:\t"BOLD"subtract.out <-f FILENAME> <-s FILENAME> <-o FILENAME>\n\n"RESET);
+    printf("Format input:\t"BOLD"subtract.out <-f FILENAME> <-s FILENAME> <-o FILENAME>\n"RESET);
+    printf("Picture 2 ("BOLD"<-s FILENAME>"RESET") should contain more information, specially for Algorithm "BOLD"1"RESET".\n\n");
     printf(ITALIC"Required Parameters:\n"RESET);
     printf(BOLD"<-f FILENAME>"RESET"\tIt specifies the first input file.\n");
     printf(BOLD"<-s FILENAME>"RESET"\tIt specifies the second input file.\n");

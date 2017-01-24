@@ -30,6 +30,8 @@
  *                                 request
  *          Rev.: 12, 22.01.2017 - Checking every return value of every function
  *          Rev.: 13, 22.01.2017 - Changing functions, theyre saver now
+ *          Rev.: 14, 24.01.2017 - Found many bugs with return value of functions
+ *                                 fixing them now
  *
  * \information Tested on macOS Sierra 10.12.2, ubuntu 12.04, raspi3pixel 4.4.38-v7+
  *
@@ -256,6 +258,8 @@ int main (int argc, char *argv[])
 /* S T A R T   O F   P R O G R A M                                  */
 /*------------------------------------------------------------------*/
     
+    clear();
+    
 /* ---- CHECK FOR NO PARAMETER INPUT ---- */
     
     if (argc == 1)
@@ -271,8 +275,6 @@ int main (int argc, char *argv[])
     
     if (error == 1)
     {
-        clear();
-
         printf(BOLD"\nERROR: One or more Parameters are not correct.\n"RESET);
         
         closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
@@ -284,8 +286,6 @@ int main (int argc, char *argv[])
     
     if (pFin_1 == NULL || pFin_2 == NULL || counterParameter != 3)
     {
-        clear();
-
         printf(BOLD"\nERROR: Both Inputfiles and Outputfile must be present.\n"RESET);
         
         closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
@@ -297,8 +297,6 @@ int main (int argc, char *argv[])
     
     if (pFout_1 == NULL)
     {
-        clear();
-
         printf(BOLD"\nERROR: Parameter -o requires an argument.\n"RESET);
         
         closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
@@ -312,8 +310,6 @@ int main (int argc, char *argv[])
     {
         if (pFout_2 == NULL)
         {
-            clear();
-
             printf(BOLD"\nERROR: Parameter -n requires an argument.\n"RESET);
             
             closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
@@ -326,8 +322,6 @@ int main (int argc, char *argv[])
     
     if (threshold_percent > 100 || threshold_percent < 0)
     {
-        clear();
-
         printf(BOLD"\nERROR: Threshold must be 0 to 100. Your input: %d\n"RESET, threshold_percent);
         
         closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
@@ -339,8 +333,6 @@ int main (int argc, char *argv[])
     
     if (algorithm_code_number != 0 && algorithm_code_number != 1 && algorithm_code_number != 2)
     {
-        clear();
-
         printf(BOLD"\nERROR: Algorithm code number can only be 0, 1 or 2. Your input: %d\n"RESET, algorithm_code_number);
         
         closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
@@ -354,8 +346,6 @@ int main (int argc, char *argv[])
            threshold_percent, algorithm_code_number, second_file);
 #endif
     
-    clear();
-    
 /*------------------------------------------------------------------*/
 /* R E A D I N G   F I L E                                          */
 /*------------------------------------------------------------------*/
@@ -365,20 +355,28 @@ int main (int argc, char *argv[])
     returnvalue = fscanf(pFin_1, "%99s", id_1);
     returnvalue = fscanf(pFin_2, "%99s", id_2);
     
-    if (returnvalue >= STRINGLENGTH)
+    if (returnvalue >= STRINGLENGTH || returnvalue == EOF)
     {
         printf(BOLD"\nERROR: Not supported data format.\n"RESET);
         
         closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+        
+        return -1;
     }
 
 /* ---- FSCANF DOESNT READ THE LAST CHAR IN A STRING EG "\n" ---- */
 
-    fgetc(pFin_1);
-    fgetc(pFin_2);
+    returnvalue = fgetc(pFin_1);
+    returnvalue = fgetc(pFin_2);
     
-    //fgets(id_1,80,pFin_1);
-    //fgets(id_2,80,pFin_2);
+    if (returnvalue == EOF)
+    {
+        printf(BOLD"\nERROR: Failed Reading Data\n"RESET);
+        
+        closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+        
+        return -1;
+    }
     
 #if DEBUG
     printf(RED ITALIC" * %s: %#01x %#01x %#01x\n"RESET, id_1, id_1[0], id_1[1], id_1[2]);
@@ -387,6 +385,9 @@ int main (int argc, char *argv[])
     
     if ((id_1[0] == 'P' && id_1[1] == '3') && (id_2[0] == 'P' && id_2[1] == '3'))
     {
+        
+/* ---- REMOVING COMMENTS ---- */
+        
         error = removecomment(FILE_1);
         if (error == 1)
         {
@@ -405,7 +406,7 @@ int main (int argc, char *argv[])
 /* ---- READING WIDTH AND HEIGHT 1 ---- */
         
         returnvalue = fscanf(pFin_1, "%u", &width_pic_1);
-        if (returnvalue == 0)
+        if (returnvalue == EOF)
         {
             printf(BOLD"\nERROR: Cant read input file.\n"RESET);
             
@@ -415,7 +416,7 @@ int main (int argc, char *argv[])
         }
         
         returnvalue = fscanf(pFin_1, "%u", &height_pic_1);
-        if (returnvalue == 0)
+        if (returnvalue == EOF)
         {
             printf(BOLD"\nERROR: Cant read input file.\n"RESET);
             
@@ -427,7 +428,7 @@ int main (int argc, char *argv[])
 /* ---- READING WIDTH AND HEIGHT 2 ---- */
 
         returnvalue = fscanf(pFin_2, "%u", &width_pic_2);
-        if (returnvalue == 0)
+        if (returnvalue == EOF)
         {
             printf(BOLD"\nERROR: Cant read input file.\n"RESET);
             
@@ -437,7 +438,7 @@ int main (int argc, char *argv[])
         }
         
         returnvalue = fscanf(pFin_2, "%u", &height_pic_2);
-        if (returnvalue == 0)
+        if (returnvalue == EOF)
         {
             printf(BOLD"\nERROR: Cant read input file.\n"RESET);
 
@@ -446,7 +447,7 @@ int main (int argc, char *argv[])
             return -1;
         }
         
-/* ---- REMOVING COMMENT IF PRESENT ---- */
+/* ---- REMOVING COMMENT ---- */
         
         error = removecomment(FILE_1);
         if (error == 1)
@@ -466,7 +467,7 @@ int main (int argc, char *argv[])
 /* ---- READING MAX COLOR INDEX ---- */
         
         returnvalue = fscanf(pFin_1, "%u", &max_color_1);
-        if (returnvalue == 0)
+        if (returnvalue == EOF)
         {
             printf(BOLD"\nERROR: Cant read input file.\n"RESET);
             
@@ -476,7 +477,7 @@ int main (int argc, char *argv[])
         }
 
         returnvalue = fscanf(pFin_2, "%u", &max_color_2);
-        if (returnvalue == 0)
+        if (returnvalue == EOF)
         {
             printf(BOLD"\nERROR: Cant read input file.\n"RESET);
 
@@ -501,7 +502,8 @@ int main (int argc, char *argv[])
         
         if (redChannel > max_color_1 || greenChannel > max_color_1 || blueChannel > max_color_1)
         {
-            printf(BOLD"\nERROR: Color Index not allowed (chose between 0 and %d"RESET, max_color_1);
+            printf(BOLD"\nERROR: Color Index not allowed (chose between 0 and %d)\n"RESET, max_color_1);
+            printf(BOLD"Standard Value is 255 may change that manually.\n"RESET);
             
             closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
 
@@ -510,7 +512,8 @@ int main (int argc, char *argv[])
         
         if (redChannel > max_color_2 || greenChannel > max_color_2 || blueChannel > max_color_2)
         {
-            printf(BOLD"\nERROR: Color Index not allowed (chose between 0 and %d"RESET, max_color_2);
+            printf(BOLD"\nERROR: Color Index not allowed (chose between 0 and %d)\n"RESET, max_color_2);
+            printf(BOLD"Standard Value is 255 may change that manually.\n"RESET);
             
             closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
 
@@ -531,7 +534,6 @@ int main (int argc, char *argv[])
             free(picture_1_Pointer);
             free(picture_2_Pointer);
             free(picture_edit_Pointer);
-            
             closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
 
             return -1;
@@ -543,6 +545,7 @@ int main (int argc, char *argv[])
         
         for (i = 0; i < width_pic_1*height_pic_1; i++)
         {
+/* ---- REMOVE COMMENT ---- */
             error = removecomment(FILE_1);
             if (error == 1)
             {
@@ -553,9 +556,9 @@ int main (int argc, char *argv[])
                 
                 return -1;
             }
-            
+/* ---- READ RED ---- */
             returnvalue = fscanf(pFin_1, "%u", &(picture_1_Pointer+i)->r);
-            if (returnvalue == 0)
+            if (returnvalue == EOF)
             {
                 printf(BOLD"\nERROR: Cant read input file.\n"RESET);
                 
@@ -566,9 +569,9 @@ int main (int argc, char *argv[])
                 
                 return -1;
             }
-            
+/* ---- READ GREEN ---- */
             returnvalue = fscanf(pFin_1, "%u", &(picture_1_Pointer+i)->g);
-            if (returnvalue == 0)
+            if (returnvalue == EOF)
             {
                 printf(BOLD"\nERROR: Cant read input file.\n"RESET);
                 
@@ -579,9 +582,9 @@ int main (int argc, char *argv[])
                 
                 return -1;
             }
-            
+/* ---- READ BLUE ---- */
             returnvalue = fscanf(pFin_1, "%u", &(picture_1_Pointer+i)->b);
-            if (returnvalue == 0)
+            if (returnvalue == EOF)
             {
                 printf(BOLD"\nERROR: Cant read input file.\n"RESET);
                 
@@ -592,11 +595,11 @@ int main (int argc, char *argv[])
                 
                 return -1;
             }
-            
         }
         
         for (i = 0; i < width_pic_2*height_pic_2; i++)
         {
+/* ---- REMOVE COMMENT ---- */
             error = removecomment(FILE_2);
             if (error == 1)
             {
@@ -607,9 +610,9 @@ int main (int argc, char *argv[])
                 
                 return -1;
             }
-            
+/* ---- READ RED ---- */
             returnvalue = fscanf(pFin_2, "%u", &(picture_2_Pointer+i)->r);
-            if (returnvalue == 0)
+            if (returnvalue == EOF)
             {
                 printf(BOLD"\nERROR: Cant read input file.\n"RESET);
                 
@@ -620,9 +623,9 @@ int main (int argc, char *argv[])
                 
                 return -1;
             }
-            
+/* ---- READ GREEN ---- */
             returnvalue = fscanf(pFin_2, "%u", &(picture_2_Pointer+i)->g);
-            if (returnvalue == 0)
+            if (returnvalue == EOF)
             {
                 printf(BOLD"\nERROR: Cant read input file.\n"RESET);
                 
@@ -633,9 +636,9 @@ int main (int argc, char *argv[])
                 
                 return -1;
             }
-            
+/* ---- READ BLUE ---- */
             returnvalue = fscanf(pFin_2, "%u", &(picture_2_Pointer+i)->b);
-            if (returnvalue == 0)
+            if (returnvalue == EOF)
             {
                 printf(BOLD"\nERROR: Cant read input file.\n"RESET);
                 
@@ -649,7 +652,6 @@ int main (int argc, char *argv[])
         }
         
         printf(BOLD"* Done file Import!\n\n"RESET);
-        
         
 /*------------------------------------------------------------------*/
 /* A L G O R I T H M   1   -   C O L O R S                          */
@@ -805,7 +807,7 @@ int main (int argc, char *argv[])
         
         returnvalue = fprintf(pFout_1, "P3\n");
         
-        if (returnvalue == 0)
+        if (returnvalue < 2)
         {
             printf(BOLD"\nERROR: Cant write output file.\n"RESET);
             
@@ -819,7 +821,7 @@ int main (int argc, char *argv[])
         
         returnvalue = fprintf(pFout_1, "#Color Image Subtraction by Sebastian Dichler\n");
         
-        if (returnvalue == 0)
+        if (returnvalue < 45)
         {
             printf(BOLD"\nERROR: Cant write output file.\n"RESET);
             
@@ -833,7 +835,7 @@ int main (int argc, char *argv[])
         
         returnvalue = fprintf(pFout_1, "%u %u\n", width_pic_1, height_pic_1);
         
-        if (returnvalue == 0)
+        if (returnvalue < 0)
         {
             printf(BOLD"\nERROR: Cant write output file.\n"RESET);
             
@@ -847,7 +849,7 @@ int main (int argc, char *argv[])
         
         returnvalue = fprintf(pFout_1, "%u\n", max_color_1);
         
-        if (returnvalue == 0)
+        if (returnvalue < 0)
         {
             printf(BOLD"\nERROR: Cant write output file.\n"RESET);
             
@@ -864,9 +866,9 @@ int main (int argc, char *argv[])
         for (i = 0; i < width_pic_1*height_pic_1; i++)
         {
             returnvalue = fprintf(pFout_1, "%u %u %u\n",
-                    (picture_edit_Pointer+i)->r, (picture_edit_Pointer+i)->g, (picture_edit_Pointer+i)->b);
+                                  (picture_edit_Pointer+i)->r, (picture_edit_Pointer+i)->g, (picture_edit_Pointer+i)->b);
             
-            if (returnvalue == 0)
+            if (returnvalue < 0)
             {
                 printf(BOLD"\nERROR: Cant write output file.\n"RESET);
                 
@@ -1030,7 +1032,7 @@ int main (int argc, char *argv[])
             
             returnvalue = fprintf(pFout_2, "P3\n");
             
-            if (returnvalue == 0)
+            if (returnvalue < 2)
             {
                 printf(BOLD"\nERROR: Cant write output file.\n"RESET);
                 
@@ -1044,7 +1046,7 @@ int main (int argc, char *argv[])
             
             returnvalue = fprintf(pFout_2, "#Color Image Subtraction by Sebastian Dichler\n");
             
-            if (returnvalue == 0)
+            if (returnvalue < 45)
             {
                 printf(BOLD"\nERROR: Cant write output file.\n"RESET);
                 
@@ -1058,7 +1060,7 @@ int main (int argc, char *argv[])
             
             returnvalue = fprintf(pFout_2, "%u %u\n", width_pic_1, height_pic_1);
             
-            if (returnvalue == 0)
+            if (returnvalue < 0)
             {
                 printf(BOLD"\nERROR: Cant write output file.\n"RESET);
                 
@@ -1072,7 +1074,7 @@ int main (int argc, char *argv[])
             
             returnvalue = fprintf(pFout_2, "%u\n", max_color_1);
             
-            if (returnvalue == 0)
+            if (returnvalue < 0)
             {
                 printf(BOLD"\nERROR: Cant write output file.\n"RESET);
                 
@@ -1089,9 +1091,9 @@ int main (int argc, char *argv[])
             for (i = 0; i < width_pic_1*height_pic_1; i++)
             {
                 returnvalue = fprintf(pFout_2, "%u %u %u\n",
-                        (picture_edit_Pointer+i)->r, (picture_edit_Pointer+i)->g, (picture_edit_Pointer+i)->b);
+                                          (picture_edit_Pointer+i)->r, (picture_edit_Pointer+i)->g, (picture_edit_Pointer+i)->b);
                 
-                if (returnvalue == 0)
+                if (returnvalue < 0)
                 {
                     printf(BOLD"\nERROR: Cant write output file.\n"RESET);
                     
@@ -1119,12 +1121,36 @@ int main (int argc, char *argv[])
     free(picture_1_Pointer);
     free(picture_2_Pointer);
     free(picture_edit_Pointer);
-    fclose(pFin_1);
-    fclose(pFin_2);
-    fclose(pFout_1);
+    returnvalue = fclose(pFin_1);
+    if (returnvalue == EOF)
+    {
+        printf(BOLD"\nERROR: Can't close Inputfile 1!\n"RESET);
+        
+        return -1;
+    }
+    returnvalue = fclose(pFin_2);
+    if (returnvalue == EOF)
+    {
+        printf(BOLD"\nERROR: Can't close Inputfile 2!\n"RESET);
+        
+        return -1;
+    }
+    returnvalue = fclose(pFout_1);
+    if (returnvalue == EOF)
+    {
+        printf(BOLD"\nERROR: Can't close Outputfile 1!\n"RESET);
+        
+        return -1;
+    }
     if (second_file == 1)
     {
-        fclose(pFout_2);
+        returnvalue = fclose(pFout_2);
+        if (returnvalue == EOF)
+        {
+            printf(BOLD"\nERROR: Can't close Outputfile 2!\n"RESET);
+            
+            return -1;
+        }
     }
     return 0;
 }

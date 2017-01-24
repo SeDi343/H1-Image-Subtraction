@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <math.h>
 
 #define DEBUG 0
 #define STRINGLENGTH 500
@@ -114,6 +115,6 @@ int removecomment(FILE *pFin, FILE *pFin2, FILE *pFout, FILE *pFout2, struct pic
 int check_number(char *number);
 unsigned int clearString(char *input);
 int clearOptarg(char *string, char *input);
-void closefiles(FILE *pFin1, FILE *pFin2, FILE *pFout1, FILE *pFout2, int second_file);
+int closefiles(FILE *pFin1, FILE *pFin2, FILE *pFout1, FILE *pFout2, int second_file);
 
 #endif /* myHeader_h */

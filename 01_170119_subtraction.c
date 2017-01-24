@@ -32,6 +32,16 @@
  *          Rev.: 13, 22.01.2017 - Changing functions, theyre saver now
  *          Rev.: 14, 24.01.2017 - Found many bugs with return value of functions
  *                                 fixing them now
+ *          Rev.: 15, 24.01.2017 - somehow the closefile function is not working
+ *                                 files dont get closed with
+ *                                 FILE ** input value and also with FILE *.
+ *                                 also not working if you put function code directly into
+ *                                 main program
+ *          Rev.: 16, 24.01.2017 - Added algorithm Gray value unweighted (3)
+ *                                 Added algorithm Gray value weighted (4)
+ *          Rev.: 17, 24.01.2017 - THRESHOLD input is now absolute value not percentage
+ *
+ * \note could also use diffcolor = diffcolor&0x7FFFFFFF;
  *
  * \information Tested on macOS Sierra 10.12.2, ubuntu 12.04, raspi3pixel 4.4.38-v7+
  *
@@ -79,7 +89,7 @@ int main (int argc, char *argv[])
     int reddiffcolor = 0;
     int greendiffcolor = 0;
     int bluediffcolor = 0;
-    int diffcolor = 0;
+    float diffcolor = 0;
     
     int threshold = 0;
     int threshold_percent = 20;
@@ -102,7 +112,7 @@ int main (int argc, char *argv[])
     
 /* ---- CHECK FOR INPUT PARAMETERS ---- */
     
-    while ( (opt = getopt (argc, argv, "f:s:o:n:t:r:g:b:a:h:?")) != -1)
+    while ( (opt = getopt (argc, argv, "f:s:o:n:t:r:g:b:a:h?")) != -1)
     {
         switch (opt)
         {
@@ -191,7 +201,9 @@ int main (int argc, char *argv[])
                 
                 error = check_number(thresholdString);
 
-                threshold_percent = strtod(thresholdString, &pEnd);
+                threshold = strtod(thresholdString, &pEnd);
+                
+                threshold_percent = 0;
             break;
                 
 /* ---- RED COLOR ---- */
@@ -255,7 +267,7 @@ int main (int argc, char *argv[])
     }
     
 /*------------------------------------------------------------------*/
-/* S T A R T   O F   P R O G R A M                                  */
+/* E R R O R   H A N D L I N G                                      */
 /*------------------------------------------------------------------*/
     
     clear();
@@ -288,6 +300,11 @@ int main (int argc, char *argv[])
     {
         printf(BOLD"\nERROR: Both Inputfiles and Outputfile must be present.\n"RESET);
         
+#if DEBUG
+        printf(RED" * IN1 missing(1missing, 0present): %d\n * IN2 missing(1missing, 0present): %d\n"RESET,
+               (pFin_1==NULL)?1:0, (pFin_2==NULL)?1:0);
+#endif
+        
         closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
 
         return -1;
@@ -318,33 +335,21 @@ int main (int argc, char *argv[])
         }
     }
     
-/* ---- THRESHOLD_PERCENT CAN ONLY BE 0 TO 100 ---- */
-    
-    if (threshold_percent > 100 || threshold_percent < 0)
-    {
-        printf(BOLD"\nERROR: Threshold must be 0 to 100. Your input: %d\n"RESET, threshold_percent);
-        
-        closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
-
-        return -1;
-    }
-    
 /* ---- ALGORITHM CODE NUMBER NOT 0, 1 OR 2 ---- */
     
-    if (algorithm_code_number != 0 && algorithm_code_number != 1 && algorithm_code_number != 2)
+    if (algorithm_code_number != 0 && algorithm_code_number != 1 && algorithm_code_number != 2 &&
+        algorithm_code_number != 3 && algorithm_code_number != 4)
     {
-        printf(BOLD"\nERROR: Algorithm code number can only be 0, 1 or 2. Your input: %d\n"RESET, algorithm_code_number);
+        printf(BOLD"\nERROR: Algorithm code number can only be 0, 1, 2, 3 or 4\n"RESET);
+        
+#if DEBUG
+        printf(RED" * Algorithm code number Input: %d"RESET, algorithm_code_number);
+#endif
         
         closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
         
         return -1;
     }
-    
-    
-#if DEBUG
-    printf(RED ITALIC" * Threshold percent: %d\n * Algorithm code: %d\n * Second File (1): %d\n"RESET,
-           threshold_percent, algorithm_code_number, second_file);
-#endif
     
 /*------------------------------------------------------------------*/
 /* R E A D I N G   F I L E                                          */
@@ -352,8 +357,8 @@ int main (int argc, char *argv[])
 
 /* ---- CHECK FOR P3 ---- */
     
-    returnvalue = fscanf(pFin_1, "%99s", id_1);
-    returnvalue = fscanf(pFin_2, "%99s", id_2);
+    returnvalue = fscanf(pFin_1, "%499s", id_1);
+    returnvalue = fscanf(pFin_2, "%499s", id_2);
     
     if (returnvalue >= STRINGLENGTH || returnvalue == EOF)
     {
@@ -503,7 +508,7 @@ int main (int argc, char *argv[])
         if (redChannel > max_color_1 || greenChannel > max_color_1 || blueChannel > max_color_1)
         {
             printf(BOLD"\nERROR: Color Index not allowed (chose between 0 and %d)\n"RESET, max_color_1);
-            printf(BOLD"Standard Value is 255 may change that manually.\n"RESET);
+            printf(BOLD"Standard Value is 255 may change that manually. with -R, -G, -B\n"RESET);
             
             closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
 
@@ -513,14 +518,39 @@ int main (int argc, char *argv[])
         if (redChannel > max_color_2 || greenChannel > max_color_2 || blueChannel > max_color_2)
         {
             printf(BOLD"\nERROR: Color Index not allowed (chose between 0 and %d)\n"RESET, max_color_2);
-            printf(BOLD"Standard Value is 255 may change that manually.\n"RESET);
+            printf(BOLD"Standard Value is 255 may change that manually. with -R, -G, -B\n"RESET);
             
             closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
 
             return -1;
         }
         
-/* ---- ALLOCATING MEMORY ---- */
+/* ---- THRESHOLD_PERCENT CAN ONLY BE 0 TO 100 ---- */
+        
+        if ((threshold > max_color_1 || threshold < 0) && threshold_percent == 0)
+        {
+            printf(BOLD"\nERROR: Threshold must be 0 to %d.\n"RESET, max_color_1);
+            
+            closefiles(pFin_1, pFin_2, pFout_1, pFout_2, second_file);
+            
+            return -1;
+        }
+        
+/* ---- CALCULATING THRESHOLD WITH PERCENTAGE ---- */
+        
+        if (threshold_percent == 20)
+        {
+            threshold = (threshold_percent * max_color_1) / 100;
+        }
+        
+#if DEBUG
+        printf(RED ITALIC" * Threshold: %d\n"RESET, threshold);
+        printf(RED ITALIC" * Threshold perc: %d\n\n"RESET, threshold_percent);
+#endif
+        
+/*------------------------------------------------------------------*/
+/* A L L O C A T I N G   M E M O R Y                                */
+/*------------------------------------------------------------------*/
         
         picture_1_Pointer = (struct picture *)malloc(width_pic_1*height_pic_1*sizeof(struct picture));
         
@@ -539,9 +569,13 @@ int main (int argc, char *argv[])
             return -1;
         }
         
-/* ---- READ PIXELS ---- */
+/*------------------------------------------------------------------*/
+/* R E A D   P I X E L S                                            */
+/*------------------------------------------------------------------*/
         
         printf(BOLD"* Importing file....\n"RESET);
+        
+/* ---- READING FIRST PICTURE ---- */
         
         for (i = 0; i < width_pic_1*height_pic_1; i++)
         {
@@ -596,6 +630,8 @@ int main (int argc, char *argv[])
                 return -1;
             }
         }
+        
+/* ---- READING SECOND PICTURE ---- */
         
         for (i = 0; i < width_pic_2*height_pic_2; i++)
         {
@@ -654,14 +690,8 @@ int main (int argc, char *argv[])
         printf(BOLD"* Done file Import!\n\n"RESET);
         
 /*------------------------------------------------------------------*/
-/* A L G O R I T H M   1   -   C O L O R S                          */
+/* A L G O R I T H M   -   C O L O R S                              */
 /*------------------------------------------------------------------*/
-        
-        threshold = (threshold_percent * max_color_1) / 100;
-        
-#if DEBUG
-        printf(RED ITALIC" * Threshold: %d\n"RESET, threshold);
-#endif
         
         if (second_file == 1)
         {
@@ -781,8 +811,59 @@ int main (int argc, char *argv[])
                 diffcolor = (((picture_1_Pointer+i)->r + (picture_1_Pointer+i)->g + (picture_1_Pointer+i)->b) -
                              ((picture_2_Pointer+i)->r + (picture_2_Pointer+i)->g + (picture_2_Pointer+i)->b));
                 
-                diffcolor = abs(diffcolor);
-                //diffcolor = diffcolor&0x7FFFFFFF;
+                diffcolor = fabsf(diffcolor);
+                
+                if (diffcolor > threshold)
+                {
+                    (picture_edit_Pointer+i)->r = redChannel;
+                    (picture_edit_Pointer+i)->g = greenChannel;
+                    (picture_edit_Pointer+i)->b = blueChannel;
+                }
+                else
+                {
+                    (picture_edit_Pointer+i)->r = (picture_1_Pointer+i)->r;
+                    (picture_edit_Pointer+i)->g = (picture_1_Pointer+i)->g;
+                    (picture_edit_Pointer+i)->b = (picture_1_Pointer+i)->b;
+                }
+            }
+        }
+        
+/* ---- ALGORITHM (3) ---- */
+        
+        if (algorithm_code_number == 3)
+        {
+            for (i = 0; i < width_pic_1*height_pic_1; i++)
+            {
+                diffcolor = ((((picture_1_Pointer+i)->r + (picture_1_Pointer+i)->g + (picture_1_Pointer+i)->b)/3) -
+                             (((picture_2_Pointer+i)->r + (picture_2_Pointer+i)->g + (picture_2_Pointer+i)->b)/3));
+                
+                diffcolor = fabsf(diffcolor);
+                
+                if (diffcolor > threshold)
+                {
+                    (picture_edit_Pointer+i)->r = redChannel;
+                    (picture_edit_Pointer+i)->g = greenChannel;
+                    (picture_edit_Pointer+i)->b = blueChannel;
+                }
+                else
+                {
+                    (picture_edit_Pointer+i)->r = (picture_1_Pointer+i)->r;
+                    (picture_edit_Pointer+i)->g = (picture_1_Pointer+i)->g;
+                    (picture_edit_Pointer+i)->b = (picture_1_Pointer+i)->b;
+                }
+            }
+        }
+        
+/* ---- ALGORITHM (4) ---- */
+        
+        if (algorithm_code_number == 4)
+        {
+            for (i = 0; i < width_pic_1*height_pic_1; i++)
+            {
+                diffcolor = ((0.299 * (picture_1_Pointer+i)->r + 0.587 * (picture_1_Pointer+i)->g + 0.144 * (picture_1_Pointer+i)->b) -
+                             (0.299 * (picture_2_Pointer+i)->r + 0.587 * (picture_2_Pointer+i)->g + 0.144 * (picture_2_Pointer+i)->b));
+                
+                diffcolor = fabsf(diffcolor);
                 
                 if (diffcolor > threshold)
                 {
@@ -884,7 +965,7 @@ int main (int argc, char *argv[])
         printf(BOLD"* Done writing file!\n\n"RESET);
         
 /*------------------------------------------------------------------*/
-/* A L G O R I T H M   2   -   B L A C K                            */
+/* A L G O R I T H M   -   B L A C K                                */
 /*------------------------------------------------------------------*/
         
         if (second_file == 1)
@@ -893,7 +974,7 @@ int main (int argc, char *argv[])
 
             printf(BOLD"* Checking Color Channels...\n"RESET);
             
-/* ---- DEFAULT ALGORITHM (0) ---- */
+/* ---- DEFAULT ALGORITHM (0) HELMUT RESCH HELPED ME WITH THIS CODE SEGMENT ---- */
             
             if (algorithm_code_number == 0)
             {
@@ -1005,8 +1086,7 @@ int main (int argc, char *argv[])
                     diffcolor = (((picture_1_Pointer+i)->r + (picture_1_Pointer+i)->g + (picture_1_Pointer+i)->b) -
                                  ((picture_2_Pointer+i)->r + (picture_2_Pointer+i)->g + (picture_2_Pointer+i)->b));
                     
-                    diffcolor = abs(diffcolor);
-                    //diffcolor = diffcolor&0x7FFFFFFF;
+                    diffcolor = fabsf(diffcolor);
                     
                     if (diffcolor > threshold)
                     {
@@ -1022,7 +1102,58 @@ int main (int argc, char *argv[])
                     }
                 }
             }
-
+            
+/* ---- ALGORITHM (3) ---- */
+            
+            if (algorithm_code_number == 3)
+            {
+                for (i = 0; i < width_pic_1*height_pic_1; i++)
+                {
+                    diffcolor = ((((picture_1_Pointer+i)->r + (picture_1_Pointer+i)->g + (picture_1_Pointer+i)->b)/3) -
+                                 (((picture_2_Pointer+i)->r + (picture_2_Pointer+i)->g + (picture_2_Pointer+i)->b)/3));
+                    
+                    diffcolor = fabsf(diffcolor);
+                    
+                    if (diffcolor > threshold)
+                    {
+                        (picture_edit_Pointer+i)->r = redChannel;
+                        (picture_edit_Pointer+i)->g = greenChannel;
+                        (picture_edit_Pointer+i)->b = blueChannel;
+                    }
+                    else
+                    {
+                        (picture_edit_Pointer+i)->r = 0;
+                        (picture_edit_Pointer+i)->g = 0;
+                        (picture_edit_Pointer+i)->b = 0;
+                    }
+                }
+            }
+            
+/* ---- ALGORITHM (4) ---- */
+            
+            if (algorithm_code_number == 4)
+            {
+                for (i = 0; i < width_pic_1*height_pic_1; i++)
+                {
+                    diffcolor = ((0.299 * (picture_1_Pointer+i)->r + 0.587 * (picture_1_Pointer+i)->g + 0.144 * (picture_1_Pointer+i)->b) -
+                                 (0.299 * (picture_2_Pointer+i)->r + 0.587 * (picture_2_Pointer+i)->g + 0.144 * (picture_2_Pointer+i)->b));
+                    
+                    diffcolor = fabsf(diffcolor);
+                    
+                    if (diffcolor > threshold)
+                    {
+                        (picture_edit_Pointer+i)->r = redChannel;
+                        (picture_edit_Pointer+i)->g = greenChannel;
+                        (picture_edit_Pointer+i)->b = blueChannel;
+                    }
+                    else
+                    {
+                        (picture_edit_Pointer+i)->r = 0;
+                        (picture_edit_Pointer+i)->g = 0;
+                        (picture_edit_Pointer+i)->b = 0;
+                    }
+                }
+            }
             
             printf(BOLD"* Done Checking Color Channels!\n\n"RESET);
             
@@ -1118,6 +1249,10 @@ int main (int argc, char *argv[])
 #endif
     }
     
+/*------------------------------------------------------------------*/
+/* F R E E   M E M O R Y   &   C L O S E   F I L E S                */
+/*------------------------------------------------------------------*/
+    
     free(picture_1_Pointer);
     free(picture_2_Pointer);
     free(picture_edit_Pointer);
@@ -1152,5 +1287,6 @@ int main (int argc, char *argv[])
             return -1;
         }
     }
+    
     return 0;
 }

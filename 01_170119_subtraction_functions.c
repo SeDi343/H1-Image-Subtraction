@@ -229,23 +229,30 @@ int clearOptarg(char *string, char *input)
 
 void closefiles(FILE *pFin1, FILE *pFin2, FILE *pFout1, FILE *pFout2, int second_file)
 {
+    int check = 0;
+    
     if (pFin1 != NULL)
     {
-        fclose(pFin1);
+        check = fclose(pFin1);
     }
     if (pFin2 != NULL)
     {
-        fclose(pFin2);
+        check = fclose(pFin2);
     }
     if (pFout1 != NULL)
     {
-        fclose(pFout1);
+        check = fclose(pFout1);
     }
     if (second_file == 1)
     {
         if (pFout2 != NULL)
         {
-            fclose(pFout2);
+            check = fclose(pFout2);
         }
+    }
+    
+    if (check == EOF)
+    {
+        printf(BOLD"\nERROR: Can't close one or more Files!\n"RESET);
     }
 }

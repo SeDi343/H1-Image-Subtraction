@@ -109,10 +109,9 @@ int main (int argc, char *argv[])
 /* P A R A M E T E R   C H E C K                                    */
 /*------------------------------------------------------------------*/
     
-    
 /* ---- CHECK FOR INPUT PARAMETERS ---- */
     
-    while ( (opt = getopt (argc, argv, "f:s:o:n:t:r:g:b:a:h?")) != -1)
+    while ( (opt = getopt (argc, argv, "f:s:o:n:t:T:r:R:g:G:b:B:a:A:h?")) != -1)
     {
         switch (opt)
         {
@@ -197,6 +196,7 @@ int main (int argc, char *argv[])
 /* ---- THRESHOLD ---- */
                 
             case 't':
+            case 'T':
                 error = clearOptarg(thresholdString, optarg);
                 
                 error = check_number(thresholdString);
@@ -209,6 +209,7 @@ int main (int argc, char *argv[])
 /* ---- RED COLOR ---- */
                 
             case 'r':
+            case 'R':
                 error = clearOptarg(redString, optarg);
                 
                 error = check_number(redString);
@@ -219,6 +220,7 @@ int main (int argc, char *argv[])
 /* ---- GREEN COLOR ---- */
                 
             case 'g':
+            case 'G':
                 error = clearOptarg(greenString, optarg);
                 
                 error = check_number(greenString);
@@ -229,6 +231,7 @@ int main (int argc, char *argv[])
 /* ---- BLUE COLOR ---- */
                 
             case 'b':
+            case 'B':
                 error = clearOptarg(blueString, optarg);
                 
                 error = check_number(blueString);
@@ -239,6 +242,7 @@ int main (int argc, char *argv[])
 /* ---- SUPPORTING MORE ALGORITHMS ---- */
                 
             case 'a':
+            case 'A':
                 error = clearOptarg(algorithm_code, optarg);
                 
                 error = check_number(algorithm_code);
@@ -249,6 +253,7 @@ int main (int argc, char *argv[])
 /* ---- HELPDESK ---- */
                 
             case 'h':
+            case 'H':
                 clearNoHelp();
                 helpdesk_2();
                 
@@ -337,8 +342,9 @@ int main (int argc, char *argv[])
     
 /* ---- ALGORITHM CODE NUMBER NOT 0, 1 OR 2 ---- */
     
-    if (algorithm_code_number != 0 && algorithm_code_number != 1 && algorithm_code_number != 2 &&
-        algorithm_code_number != 3 && algorithm_code_number != 4)
+    if (algorithm_code_number != 0 && algorithm_code_number != 1 &&
+        algorithm_code_number != 2 && algorithm_code_number != 3 &&
+        algorithm_code_number != 4)
     {
         printf(BOLD"\nERROR: Algorithm code number can only be 0, 1, 2, 3 or 4\n"RESET);
         
@@ -388,7 +394,7 @@ int main (int argc, char *argv[])
     printf(RED ITALIC" * %s: %#01x %#01x %#01x\n"RESET, id_2, id_2[0], id_2[1], id_2[2]);
 #endif
     
-    if ((id_1[0] == 'P' && id_1[1] == '3') && (id_2[0] == 'P' && id_2[1] == '3'))
+    if ((strncmp(id_1, "P3", 2) == 0) && (strncmp(id_2, "P3", 2) == 0))
     {
         
 /* ---- REMOVING COMMENTS ---- */

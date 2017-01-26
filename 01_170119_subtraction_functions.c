@@ -163,16 +163,25 @@ int removecomment(FILE *pFin, FILE *pFin2, FILE *pFout, FILE *pFout2, struct pic
 
 int check_number(char *number)
 {
+    char * pch;
     int i;
+    
+    pch = strchr(number, '.');
+    if (pch != NULL)
+    {
+        printf(BOLD"\nERROR: No floating-point numbers allowed.\n"RESET);
+        return 1;
+    }
+    
+    pch = strchr(number, ',');
+    if (pch != NULL)
+    {
+        printf(BOLD"\nERROR: No floating-point numbers allowed.\n"RESET);
+        return 1;
+    }
     
     for (i = 0; i < strnlen(number, STRINGLENGTH); i++)
     {
-        if (number[i] == '.' || number[i] == ',')
-        {
-            printf(BOLD"\nERROR: No floating-point numbers allowed.\n"RESET);
-            return 1;
-        }
-        
         if (isdigit(number[i]) == 0)
         {
             printf(BOLD"\nERROR: Parameter is not a number.\n"RESET);
